@@ -1,4 +1,4 @@
-#Banchmark Tests for lightning-pool
+# Benchmark Tests for lightning-pool
 
 ## How we test it?
 
