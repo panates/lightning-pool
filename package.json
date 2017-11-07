@@ -1,0 +1,42 @@
+{
+  "name": "lightning-pool",
+  "description": "Fastest object pool implementation for JavaScript",
+  "version": "1.0.0",
+  "author": "Panates Ltd.",
+  "contributors": [
+    "Eray Hanoglu <e.hanoglu@panates.com>"
+  ],
+  "license": "MIT",
+  "repository": "panates/lightning-pool",
+  "keywords": [
+    "javascript",
+    "pool"
+  ],
+  "dependencies": {
+    "doublylinked": "^1.0.3",
+    "putil-promisify": "^1.1.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.0.2",
+    "eslint": "^4.10.0",
+    "eslint-config-google": "^0.9.1",
+    "istanbul": "^0.4.5",
+    "mocha": "^4.0.1"
+  },
+  "engines": {
+    "node": ">= 4.0"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "lib/"
+  ],
+  "scripts": {
+    "test": "mocha --require test/support/env --reporter spec --bail --check-leaks test/",
+    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --require test/support/env --reporter dot --check-leaks test/",
+    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --require test/support/env --reporter spec --check-leaks test/"
+  }
+}
