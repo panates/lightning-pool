@@ -22,7 +22,7 @@ High performance resource pool for NodeJS.
 
   - `npm install lightning-pool --save`
 
-### Example (Using callback based API)
+## Example (Using callback based API)
 
 ```js
 const lightningPool = require('lightning-pool');
@@ -84,7 +84,7 @@ process.on('SIGINT', function() {
 });
 ```
 
-### Example (Using Promise based API)
+## Example (Using Promise based API)
 
 ```js
 const lightningPool = require('lightning-pool');
@@ -383,6 +383,19 @@ promise.then(() => {
 - `pending` (Number): Returns number of acquire request waits in the `Pool` queue.
 - `size` (Number): Returns number total resources.
 - `state` (PoolState): Returns current state of the `Pool`.
+- `options` (PoolOptions): Returns object instance that holds configuration properties
+    - `acquireMaxRetries` (Get/Set): Maximum number that `Pool` will try to create a resource before returning the error. (Default 0)
+    - `acquireRetryWait` (Get/Set): Time in millis that `Pool` will wait after each tries. (Default 2000) 
+    - `acquireTimeoutMillis` (Get/Set): Time in millis an acquire call will wait for a resource before timing out. (Default 0 - no limit) 
+    - `fifo` (Get/Set): If true resources will be allocated first-in-first-out order. resources will be allocated last-in-first-out order. (Default true)
+    - `idleTimeoutMillis` (Get/Set): The minimum amount of time in millis that an `resource` may sit idle in the `Pool`. (Default 30000) 
+    - `houseKeepInterval` (Get/Set): Time period in millis that `Pool` will make a cleanup. (Default 1000) 
+    - `min` (Get/Set): Minimum number of resources that `Pool` will keep. (Default 0)
+    - `minIdle` (Get/Set): Minimum number of resources that `Pool` will keep in idle state. (Default 0)
+    - `max` (Get/Set): Maximum number of resources that `Pool` will create. (Default 10)
+    - `maxQueue` (Get/Set): Maximum number of request that `Pool` will acceps. (Default 1000)
+    - `resetOnReturn` (Get/Set): If true `Pool` will call `reset()` function of factory before moving it idle state. (Default true)
+    - `validation` (Get/Set): If true `Pool` will call `validation()` function of factory when it needs it. If false, `validation()` never been called. (Default true)    
 
 ### Events
 
