@@ -32,7 +32,8 @@
   "files": [
     "LICENSE",
     "README.md",
-    "lib/"
+    "lib/",
+    "index.js"
   ],
   "scripts": {
     "test": "mocha --require test/support/env --reporter spec --bail --check-leaks test/",
