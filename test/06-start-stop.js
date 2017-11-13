@@ -26,7 +26,7 @@ describe('Start/Stop', function() {
     pool.stop(function() {
       pool.acquire()
           .then(function() {
-            assert(1);
+            assert(0);
           })
           .catch(function(e) {
             return done();
@@ -42,7 +42,7 @@ describe('Start/Stop', function() {
         assert(err);
         done();
       });
-      assert(1);
+      assert(0);
     });
   });
 

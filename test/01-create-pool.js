@@ -19,7 +19,7 @@ describe('Creating pool', function() {
     } catch (e) {
       return done();
     }
-    assert(1, 'Failed');
+    assert(0, 'Failed');
   });
 
   it('should check `factory` object must have a `create` function property', function(done) {
