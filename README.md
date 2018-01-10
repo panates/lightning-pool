@@ -204,7 +204,7 @@ Can be any object/instance with the following properties:
 - `min`: Minimum number of resources that `Pool` will keep. (Default 0)
 - `minIdle`: Minimum number of resources that `Pool` will keep in idle state. (Default 0)
 - `max`: Maximum number of resources that `Pool` will create. (Default 10)
-- `maxQueue`: Maximum number of request that `Pool` will acceps. (Default 1000)
+- `maxQueue`: Maximum number of request that `Pool` will accept. (Default 1000)
 - `resetOnReturn`: If true `Pool` will call `reset()` function of factory before moving it idle state. (Default true)
 - `validation`: If true `Pool` will call `validation()` function of factory when it needs it. If false, `validation()` never been called. (Default true)
 
@@ -381,7 +381,7 @@ promise.then(() => {
 - `available` (Number): Returns number of idle resources.
 - `creating` (Number): Returns number of resources currently been created.
 - `pending` (Number): Returns number of acquire request waits in the `Pool` queue.
-- `size` (Number): Returns number total resources.
+- `size` (Number): Returns number of total resources.
 - `state` (PoolState): Returns current state of the `Pool`.
 - `options` (PoolOptions): Returns object instance that holds configuration properties
     - `acquireMaxRetries` (Get/Set): Maximum number that `Pool` will try to create a resource before returning the error. (Default 0)
