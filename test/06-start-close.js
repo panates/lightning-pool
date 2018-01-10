@@ -3,11 +3,11 @@ const assert = require('assert');
 const lightningPool = require('../');
 const TestFactory = require('./TestFactory');
 
-describe('Start/Stop', function() {
+describe('Start/Close', function() {
   var pool;
 
   afterEach(function() {
-    pool.stop(true);
+    pool.close(true);
   });
 
   it('should start on acquire', function(done) {
@@ -23,7 +23,7 @@ describe('Start/Stop', function() {
   it('should not start a closed pool again', function(done) {
     pool = lightningPool.createPool(new TestFactory());
     pool.start();
-    pool.stop(function() {
+    pool.close(function() {
       pool.acquire()
           .then(function() {
             assert(0);
@@ -37,7 +37,7 @@ describe('Start/Stop', function() {
   it('should not acquire from a closed pool', function(done) {
     pool = lightningPool.createPool(new TestFactory());
     pool.start();
-    pool.stop(function() {
+    pool.close(function() {
       pool.acquire(function(err) {
         assert(err);
         done();

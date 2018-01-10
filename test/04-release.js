@@ -7,7 +7,7 @@ describe('Releasing', function() {
   var pool;
 
   afterEach(function() {
-    pool.stop(true);
+    pool.close(true);
   });
 
   it('should release with pool.release()', function(done) {

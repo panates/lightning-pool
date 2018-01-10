@@ -7,7 +7,7 @@ describe('Acquiring', function() {
   var pool;
 
   afterEach(function() {
-    pool.stop(true);
+    pool.close(true);
   });
 
   it('should acquire', function(done) {

@@ -7,7 +7,7 @@ describe('Ensuring min resources', function() {
   var pool;
 
   afterEach(function() {
-    pool.stop(true);
+    pool.close(true);
   });
 
   it('should pool have at least `min` resource', function(done) {

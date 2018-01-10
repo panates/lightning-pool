@@ -37,7 +37,7 @@ function runTest(options, callback) {
 }
 
 function clearPool(callback) {
-  pool.stop(true, function() {
+  pool.close(true, function() {
     callback();
   });
 }

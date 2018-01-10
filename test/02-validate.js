@@ -7,7 +7,7 @@ describe('Validating', function() {
   var pool;
 
   afterEach(function() {
-    pool.stop(true);
+    pool.close(true);
   });
 
   it('should validate on borrow', function(done) {

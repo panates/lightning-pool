@@ -77,10 +77,10 @@ pool.acquire(function(err, client) {
 
 /**
  * Step 3 - Shutdown pool (optional)
- * Call stop(force, callback) when you need to shutdown the pool
+ * Call close(force, callback) when you need to shutdown the pool
  */
 process.on('SIGINT', function() {
-  pool.stop(true);
+  pool.close(true);
 });
 ```
 
@@ -162,10 +162,10 @@ pool.acquire().then(client => {
 
 /**
  * Step 3 - Shutdown pool (optional)
- * Call stop(force, callback) when you need to shutdown the pool
+ * Call close(force, callback) when you need to shutdown the pool
  */
 process.on('SIGINT', function() {
-  pool.stop(true);
+  pool.close(true);
 });
 ```
 
@@ -338,20 +338,20 @@ pool.start();
 
 
 
-#### Pool.prototype.stop()
+#### Pool.prototype.close()
 
 Shuts down the `Pool` and destroys all resources.  
 
 ##### Usage
 
-`pool.stop([force], callback)`
+`pool.close([force], callback)`
 
 - `force` (optional): If true, `Pool` will immediately destroy resources instead of waiting to be released (Default false)
 - `callback`: A function with one argument.
 - *Returns*: undefined
 
 ```js
-pool.stop(function(error) {
+pool.close(function(error) {
   if (error)
     return console.error(error);
   console.log('Pool has been shut down')
@@ -360,13 +360,13 @@ pool.stop(function(error) {
 
 ##### Usage (With promise)
 
-`pool.stop([force])`
+`pool.close([force])`
 
 - `force` (optional): If true, `Pool` will immediately destroy resources instead of waiting to be released (Default false)
 - *Returns*: A Promise
 
 ```js
-var promise = pool.stop();
+var promise = pool.close();
 promise.then(() => {
   console.log('Pool has been shut down') 
 }).catch(err => {
@@ -446,17 +446,17 @@ pool.on('start', function(){
 })
 ```    
 
-- `stopping`: Emitted when before stopping the `Pool`.
+- `closing`: Emitted when before closing the `Pool`.
 ```js
-pool.on('stopping', function(){
+pool.on('closing', function(){
   //...
 })
 ```    
 
 
-- `stop`: Emitted when after stopping the `Pool`.
+- `close`: Emitted when after closing the `Pool`.
 ```js
-pool.on('stop', function(){
+pool.on('close', function(){
   //...
 })
 ```    
@@ -476,9 +476,9 @@ Pool.PoolState (Number):
   
 - STARTED: 1,  // Pool has been started
   
-- STOPPING: 2, // Pool shutdown in progress
+- CLOSING: 2, // Pool shutdown in progress
   
-- STOPPED: 3   // Pool has been shut down
+- CLOSED: 3   // Pool has been shut down
   
 
 
