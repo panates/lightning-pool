@@ -8,8 +8,6 @@
 
 const Pool = require('./lib/Pool');
 
-module.exports = Pool;
-
 module.exports = {
   createPool: function(factory, options) {
     return new Pool(factory, options);
