@@ -13,7 +13,7 @@
     "pool"
   ],
   "dependencies": {
-    "doublylinked": "^1.0.6",
+    "doublylinked": "^1.0.7",
     "putil-promisify": "^1.1.0"
   },
   "devDependencies": {
