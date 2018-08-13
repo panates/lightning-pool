@@ -7,11 +7,13 @@
  */
 
 const Pool = require('./lib/Pool');
+const AbortError = require('./lib/AbortError');
 
 module.exports = {
   createPool: function(factory, options) {
     return new Pool(factory, options);
   },
   Pool: Pool,
-  PoolState: Pool.PoolState
+  PoolState: Pool.PoolState,
+  AbortError
 };

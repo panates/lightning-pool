@@ -14,7 +14,7 @@ High performance resource pool for NodeJS.
  - Fastest Resource Pool implementation for NodeJS ever! Check out [benchmark](BANCHMARK.md) results
  - Advanced configuration options, suits for enterprise level applications
  - Configuration can be changed while pool running
- - Both callback and Promise based API supported
+ - Promise based factory supported
  - Supports validation and resource reset
  - Fully tested. (%100 coverage)
 
@@ -22,7 +22,7 @@ High performance resource pool for NodeJS.
 
   - `npm install lightning-pool --save`
 
-## Example (Using callback based API)
+## Example
 
 ```js
 const lightningPool = require('lightning-pool');
@@ -32,71 +32,9 @@ const dbDriver = require('some-db-driver');
  * Step 1 - Create a factory object
  */
 const factory = {
-    create: function(callback){
-      DbDriver.createClient(callback);      
-    },
-    destroy: function(client, callback){        
-       client.disconnect(callback);       
-    },
-    reset: function(client, callback){        
-       client.rollback(callback);       
-    },
-    validate: function(client, callback){        
-       client.execute('some test sql', callback);       
-    }    
-};
-
-/**
- * Step 1 - Create a the `Pool` object
- */
-var opts = {  
-    max: 10,    // maximum size of the `Pool`
-    min: 2,     // minimum size of the `Pool`
-    minIdle: 2  // minimum idle resources
-}
-
-var pool = lightningPool.createPool(factory, opts)
-
-/**
- * Step 3 - Use `Pool` in your code to acquire/release resources
- */
-
-// acquire connection - Promise is resolved
-// once a resource becomes available
-pool.acquire(function(err, client) {
-  // handle error
-  if (err)
-    return console.error(err);
-  // Use resource
-  client.query("select * from foo", [], function() {
-    // return object back to pool
-	pool.release(client);
-  });  
-});
-
-
-/**
- * Step 3 - Shutdown pool (optional)
- * Call close(force, callback) when you need to shutdown the pool
- */
-process.on('SIGINT', function() {
-  pool.close(true);
-});
-```
-
-## Example (Using Promise based API)
-
-```js
-const lightningPool = require('lightning-pool');
-const dbDriver = require('some-db-driver');
-
-/**
- * Step 1 - Create a factory object
- */
-const factory = {
-    create: function(){
-      return new Promise(function(resolve, reject) {
-        DbDriver.createClient(function(err, client) {
+    create: function(opts){
+      return new Promise((resolve, reject) => {
+        DbDriver.createClient((err, client) => {
           if (err)
             return reject(err);
           resolve(client);
@@ -104,8 +42,8 @@ const factory = {
       });     
     },
     destroy: function(client){        
-       return new Promise(function(resolve, reject) {
-         client.destroy(function(err) {
+       return new Promise((resolve, reject) => {
+         client.destroy((err) => {
            if (err)
              return reject(err);
                resolve();
@@ -113,8 +51,8 @@ const factory = {
            });       
     },
     reset: function(client){        
-       return new Promise(function(resolve, reject) {
-         client.rollback(function(err) {
+       return new Promise((resolve, reject) => {
+         client.rollback((err) => {
            if (err)
              return reject(err);
                resolve();
@@ -122,8 +60,8 @@ const factory = {
            });                    
     },
     validate: function(client){        
-       return new Promise(function(resolve, reject) {
-         client.execute('some test sql', function(err) {
+       return new Promise((resolve, reject) => {
+         client.execute('some test sql', (err) => {
            if (err)
              return reject(err);
                resolve();
@@ -162,7 +100,7 @@ pool.acquire().then(client => {
 
 /**
  * Step 3 - Shutdown pool (optional)
- * Call close(force, callback) when you need to shutdown the pool
+ * Call close(force) when you need to shutdown the pool
  */
 process.on('SIGINT', function() {
   pool.close(true);
@@ -189,10 +127,10 @@ const pool = new Pool(factory, options);
 
 Can be any object/instance with the following properties:
 
-- `create` : The function that the `Pool` will call when it needs a new resource. It can return a `Promise` or `callback` argument can be used to when create process done.
-- `destroy` : The function that the `Pool` will call when it wants to destroy a `resource`. It should accept first argument as `resource`,  where `resource` is whatever factory.create made. It can return a `Promise` or `callback` argument can be used to when destroy process done.    
-- `reset` (optional) : The function that the `Pool` will call before any `resource` back to the `Pool`. It should accept first argument as `resource`,  where `resource` is whatever factory.create made. It can return a `Promise` or `callback` argument can be used to when reset process done. `Pool` will destroy and remove the resource from the `Pool` on any error.
-- `validate` (optional) : The function that the `Pool` will call when any resource needs to be validated. It should accept first argument as `resource`,  where `resource` is whatever factory.create made. It can return a `Promise` or `callback` argument can be used to when reset process done. `Pool` will destroy and remove the resource from the `Pool` on any error.
+- `create` : The function that the `Pool` will call when it needs a new resource. It should return a `Promise<resouce>`.
+- `destroy` : The function that the `Pool` will call when it wants to destroy a `resource`. It should accept first argument as `resource`,  where `resource` is whatever factory.create made. It should return a `Promise<>`.    
+- `reset` (optional) : The function that the `Pool` will call before any `resource` back to the `Pool`. It should accept first argument as `resource`,  where `resource` is whatever factory.create made. It should return a `Promise<>`. `Pool` will destroy and remove the resource from the `Pool` on any error.
+- `validate` (optional) : The function that the `Pool` will call when any resource needs to be validated. It should accept first argument as `resource`,  where `resource` is whatever factory.create made. It should return a `Promise<>`. `Pool` will destroy and remove the resource from the `Pool` on any error.
 
 #### options
 - `acquireMaxRetries`: Maximum number that `Pool` will try to create a resource before returning the error. (Default 0)
@@ -214,22 +152,7 @@ Can be any object/instance with the following properties:
 
 Acquires a `resource` from the `Pool` or create a new one.
 
-##### Usage (With callback)
-
-`pool.acquire(callback)`
-
-- `callback: function(error, resource)`: A function with two arguments.
-- *Returns*: undefined
-
-```js
-pool.acquire(function(error, resource) {
-  if (error)
-    return console.error(error);
-  // Do what ever you want with resource
-});
-```
-
-##### Usage (With promise)
+##### Usage
 
 `pool.acquire()`
 
@@ -341,22 +264,6 @@ pool.start();
 #### Pool.prototype.close()
 
 Shuts down the `Pool` and destroys all resources.  
-
-##### Usage
-
-`pool.close([force], callback)`
-
-- `force` (optional): If true, `Pool` will immediately destroy resources instead of waiting to be released (Default false)
-- `callback`: A function with one argument.
-- *Returns*: undefined
-
-```js
-pool.close(function(error) {
-  if (error)
-    return console.error(error);
-  console.log('Pool has been shut down')
-});
-```
 
 ##### Usage (With promise)
 

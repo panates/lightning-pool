@@ -7,7 +7,7 @@ describe('Releasing', function() {
   var pool;
 
   afterEach(function() {
-    pool.close(true);
+    return pool.close(true);
   });
 
   it('should release with pool.release()', function(done) {
@@ -163,26 +163,19 @@ describe('Releasing', function() {
     }, 40);
   });
 
-  it('should destroy on reset error', function(done) {
+  it('should destroy on reset error', async function() {
     pool = lightningPool.createPool(new TestFactory({
-      reset: function(obj, callback) {
-        callback(new Error('Any reset error'));
+      reset: function(obj) {
+        throw new Error('Any reset error');
       }
     }));
-    const acquire = function() {
-      pool.acquire(function(err, obj) {
-        assert(!err, err);
-        pool.release(obj);
-      });
-    };
-    pool.on('destroy', function() {
-      assert.equal(pool.size, 0);
-      assert.equal(pool.acquired, 0);
-      assert.equal(pool.pending, 0);
-      assert.equal(pool.available, 0);
-      done();
-    });
-    acquire();
+    const obj = await pool.acquire();
+    await pool.release(obj);
+    assert.equal(pool.size, 0);
+    assert.equal(pool.acquired, 0);
+    assert.equal(pool.pending, 0);
+    assert.equal(pool.available, 0);
+
   });
 
   it('should emit destroy-error', function(done) {
