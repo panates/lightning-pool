@@ -33,12 +33,17 @@ class TestFactory {
       if (this.max && id >= this.max)
         throw new Error('Max resources created');
 
-      setTimeout(() => {
+      const doCreate = () => {
         if (this.retryTest && this.retryTest--)
           return reject('Retry test error');
         const res = new TestResource(id);
         resolve(res);
-      }, this.acquireWait);
+      };
+
+      if (this.acquireWait)
+        setTimeout(doCreate, this.acquireWait);
+      else doCreate();
+
     });
   };
 

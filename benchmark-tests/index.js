@@ -1,10 +1,9 @@
 const lightningPoolTest = require('./lightning-pool');
 const genericPoolTest = require('./generic-pool');
-const advancedPoolTest = require('./advanced-pool');
 const waterfall = require('putil-waterfall');
 
 const testLoops = 4;
-var testId = 0;
+let testId = 0;
 
 function runTest(options, callback) {
   console.log('### Starting Test-', ++testId, '###');
@@ -33,15 +32,10 @@ function runTest(options, callback) {
   };
 
   const printResults = function() {
-    var t = Math.round(((results[1] / results[0]) - 1) * 100);
+    let t = Math.round(((results[1] / results[0]) - 1) * 100);
     if (t > 0)
       console.log('Result: lightning is %', t, 'faster than generic');
     else console.log('Result: generic is %', t, 'faster than lightning');
-
-    var t = Math.round(((results[2] / results[0]) - 1) * 100);
-    if (t > 0)
-      console.log('Result: lightning is %', t, 'faster than advanced');
-    else console.log('Result: advanced is %', t, 'faster than lightning');
     console.log(' ');
   };
 
@@ -51,9 +45,6 @@ function runTest(options, callback) {
     },
     function(next) {
       runForAvg(testLoops, genericPoolTest, next);
-    },
-    function(next) {
-      runForAvg(testLoops, advancedPoolTest, next);
     }
   ], function(err) {
     if (err)

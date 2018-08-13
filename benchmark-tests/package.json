@@ -9,10 +9,9 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "advanced-pool": "^0.3.3",
-    "generic-pool": "^3.2.0",
-    "putil-promisify": "^1.1.0",
-    "putil-waterfall": "^1.1.1"
+    "generic-pool": "^3.4.2",
+    "putil-promisify": "^1.2.0",
+    "putil-waterfall": "^1.2.1"
   },
   "devDependencies": {},
   "engines": {
