@@ -10,18 +10,22 @@ describe('Validating', function() {
     return pool.close(true);
   });
 
-  it('should validate on borrow', async function() {
+  it('should validate on borrow', function() {
     pool = createPool(new TestFactory());
 
-    let obj = await pool.acquire();
-    await pool.release(obj);
-    obj = await pool.acquire();
-    assert.equal(obj.id, 1);
-    assert.equal(obj.validateCount, 1);
-    await pool.release(obj);
+    return pool.acquire().then(obj => {
+      return pool.release(obj).then(() => {
+        return pool.acquire().then(obj => {
+          assert.equal(obj.id, 1);
+          assert.equal(obj.validateCount, 1);
+          return pool.release(obj);
+        });
+      });
+
+    });
   });
 
-  it('should validate on borrow and remove if error', async function() {
+  it('should validate on borrow and remove if error', function() {
     pool = createPool(new TestFactory({
       validate: function(res) {
         throw new Error('Validate error');
@@ -30,11 +34,14 @@ describe('Validating', function() {
       validation: true
     });
 
-    let obj = await pool.acquire();
-    await pool.release(obj);
-    obj = await pool.acquire();
-    assert.equal(pool.size, 1);
-    await pool.release(obj);
+    return pool.acquire().then(obj=>{
+      return pool.release(obj).then(()=>{
+        return pool.acquire().then(obj=>{
+          assert.equal(pool.size, 1);
+          return pool.release(obj);
+        })
+      });
+    });
   });
 
   it('should not validate if options.validation is false', function(done) {

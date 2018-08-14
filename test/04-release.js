@@ -163,19 +163,20 @@ describe('Releasing', function() {
     }, 40);
   });
 
-  it('should destroy on reset error', async function() {
+  it('should destroy on reset error', function() {
     pool = lightningPool.createPool(new TestFactory({
       reset: function(obj) {
         throw new Error('Any reset error');
       }
     }));
-    const obj = await pool.acquire();
-    await pool.release(obj);
-    assert.equal(pool.size, 0);
-    assert.equal(pool.acquired, 0);
-    assert.equal(pool.pending, 0);
-    assert.equal(pool.available, 0);
-
+    return pool.acquire().then(obj => {
+      return pool.release(obj).then(() => {
+        assert.equal(pool.size, 0);
+        assert.equal(pool.acquired, 0);
+        assert.equal(pool.pending, 0);
+        assert.equal(pool.available, 0);
+      });
+    });
   });
 
   it('should emit destroy-error', function(done) {
