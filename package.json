@@ -1,7 +1,7 @@
 {
   "name": "lightning-pool",
   "description": "Fastest object pool implementation for JavaScript",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "author": "Panates Ltd.",
   "contributors": [
     "Eray Hanoglu <e.hanoglu@panates.com>"
