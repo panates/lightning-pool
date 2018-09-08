@@ -1,7 +1,7 @@
 {
   "name": "lightning-pool",
   "description": "Fastest object pool implementation for JavaScript",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "author": "Panates Ltd.",
   "contributors": [
     "Eray Hanoglu <e.hanoglu@panates.com>"
@@ -13,18 +13,18 @@
     "pool"
   ],
   "dependencies": {
-    "doublylinked": "^1.0.7",
+    "doublylinked": "^2.0.0",
     "putil-promisify": "^1.2.0"
   },
   "devDependencies": {
-    "babel-eslint": "^8.2.6",
-    "eslint": "^5.3.0",
-    "eslint-config-google": "^0.9.1",
+    "babel-eslint": "^9.0.0",
+    "eslint": "^5.5.0",
+    "eslint-config-google": "^0.10.0",
     "istanbul": "^0.4.5",
     "mocha": "^5.2.0"
   },
   "engines": {
-    "node": ">= 4.0"
+    "node": ">= 6.0"
   },
   "directories": {
     "lib": "./lib"
