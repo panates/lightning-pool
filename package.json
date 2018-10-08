@@ -17,10 +17,10 @@
     "putil-promisify": "^1.2.0"
   },
   "devDependencies": {
-    "babel-eslint": "^9.0.0",
-    "eslint": "^5.5.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.6.1",
     "eslint-config-google": "^0.10.0",
-    "istanbul": "^0.4.5",
+    "nyc": "^13.0.1",
     "mocha": "^5.2.0"
   },
   "engines": {
