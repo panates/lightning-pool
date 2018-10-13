@@ -14,6 +14,7 @@
   ],
   "dependencies": {
     "doublylinked": "^2.0.0",
+    "errorex": "^2.0.3",
     "putil-promisify": "^1.2.0"
   },
   "devDependencies": {
