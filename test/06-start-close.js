@@ -17,7 +17,7 @@ describe('Start/Close', function() {
 
   it('should start on acquire', function(done) {
     pool.on('start', function() {
-      done();
+      setTimeout(() => done(), 10);
     });
     pool.acquire(() => {});
   });
