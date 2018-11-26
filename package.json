@@ -37,7 +37,7 @@
     "index.js"
   ],
   "nyc": {
-    "temp-directory": "./coverage/.nyc_output"
+    "temp-dir": "./coverage/.nyc_output"
   },
   "scripts": {
     "test": "mocha --require ./test/support/env --reporter spec --bail --check-leaks test/",
