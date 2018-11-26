@@ -7,23 +7,22 @@ describe('Start/Close', function() {
 
   let pool;
 
+  beforeEach(() => {
+    pool = lightningPool.createPool(new TestFactory());
+  });
+
   afterEach(function() {
-    pool.close(true);
+    return pool.close(true);
   });
 
   it('should start on acquire', function(done) {
-    pool = lightningPool.createPool(new TestFactory());
     pool.on('start', function() {
       done();
     });
-    pool.acquire(function(err, obj) {
-      assert(!err, err);
-      assert(obj);
-    });
+    pool.acquire(() => {});
   });
 
   it('should not start a closed pool again', function() {
-    pool = lightningPool.createPool(new TestFactory());
     pool.start();
     return pool.close().then(() => {
       assert.rejects(() => pool.acquire());
@@ -31,10 +30,9 @@ describe('Start/Close', function() {
   });
 
   it('should not acquire from a closed pool', function() {
-    pool = lightningPool.createPool(new TestFactory());
     pool.start();
     return pool.close().then(() => {
-      assert.doesNotReject(() => pool.acquire());
+      assert.rejects(() => pool.acquire());
     });
   });
 
