@@ -4,7 +4,8 @@ const lightningPool = require('../');
 const TestFactory = require('./TestFactory');
 
 describe('Start/Close', function() {
-  var pool;
+
+  let pool;
 
   afterEach(function() {
     pool.close(true);
@@ -17,32 +18,23 @@ describe('Start/Close', function() {
     });
     pool.acquire(function(err, obj) {
       assert(!err, err);
+      assert(obj);
     });
   });
 
-  it('should not start a closed pool again', function(done) {
+  it('should not start a closed pool again', function() {
     pool = lightningPool.createPool(new TestFactory());
     pool.start();
-    pool.close(function() {
-      pool.acquire()
-          .then(function() {
-            assert(0);
-          })
-          .catch(function(e) {
-            return done();
-          });
+    return pool.close().then(() => {
+      assert.rejects(() => pool.acquire());
     });
   });
 
-  it('should not acquire from a closed pool', function(done) {
+  it('should not acquire from a closed pool', function() {
     pool = lightningPool.createPool(new TestFactory());
     pool.start();
-    pool.close(function() {
-      pool.acquire(function(err) {
-        assert(err);
-        done();
-      });
-      assert(0);
+    return pool.close().then(() => {
+      assert.doesNotReject(() => pool.acquire());
     });
   });
 

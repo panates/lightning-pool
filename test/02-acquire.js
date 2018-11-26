@@ -12,12 +12,12 @@ describe('Acquiring', function() {
 
   it('should acquire', function(done) {
     pool = createPool(new TestFactory());
-    pool.acquire(function(err, obj) {
+    pool.acquire((err, obj) => {
       try {
         assert(!err, err);
-        assert.equal(obj.id, 1);
-        assert.equal(pool.acquired, 1);
-        assert.equal(pool.state, 1);
+        assert.strictEqual(obj.id, 1);
+        assert.strictEqual(pool.acquired, 1);
+        assert.strictEqual(pool.state, 1);
         done();
       } catch (e) {
         done(e);
@@ -28,9 +28,9 @@ describe('Acquiring', function() {
   it('should acquire (promise)', function() {
     pool = createPool(new TestFactory());
     return pool.acquire().then(obj => {
-      assert.equal(obj.id, 1);
-      assert.equal(pool.acquired, 1);
-      assert.equal(pool.size, 1);
+      assert.strictEqual(obj.id, 1);
+      assert.strictEqual(pool.acquired, 1);
+      assert.strictEqual(pool.size, 1);
     });
   });
 
@@ -40,7 +40,7 @@ describe('Acquiring', function() {
       acquireRetryWait: 10
     });
     return pool.acquire().then(obj => {
-      assert.equal(obj.id, 2);
+      assert.strictEqual(obj.id, 2);
     });
   });
 
@@ -51,54 +51,53 @@ describe('Acquiring', function() {
     });
     pool.acquire(function(err, obj) {
       assert(err);
+      assert(!obj);
       done();
     });
   });
 
-  it('should fail when factory returns existing object', function(done) {
-    var obj = {};
-    pool = createPool(new TestFactory(
-        {
-          create: function() {
-            return obj;
-          }
+  it('should fail when factory returns existing object', function() {
+    let obj = {};
+    pool = createPool(new TestFactory({
+          create: () => obj
         }
     ));
-    pool.acquire().then(obj => {
-      pool.acquire().then(obj => done('Failed')).catch(() => done());
+    return pool.acquire().then(() => {
+      assert.rejects(() => pool.acquire());
     });
 
   });
 
-  it('should fail immediately if throws AbortError', function(done) {
-    pool = createPool(new TestFactory(
-        {
+  it('should fail immediately if throws AbortError', function() {
+    pool = createPool(new TestFactory({
           create: function() {
             throw new AbortError('Aborted');
           }
         }
     ));
-    pool.acquire().then(() => done('Failed')).catch(err => done());
+    assert.rejects(() => pool.acquire());
   });
 
   it('should not exceed resource limit', function(done) {
     pool = createPool(new TestFactory(),
         {max: 3});
     const acquire = function() {
-      pool.acquire(function(err, obj) {
-        assert(!err, err);
-      });
+      pool.acquire();
     };
     acquire();
     acquire();
     acquire();
     acquire();
     setTimeout(function() {
-      assert.equal(pool.size, 3);
-      assert.equal(pool.acquired, 3);
-      assert.equal(pool.pending, 1);
-      assert.equal(pool.available, 0);
-      done();
+      try {
+        assert.strictEqual(pool.size, 3);
+        assert.strictEqual(pool.acquired, 3);
+        assert.strictEqual(pool.pending, 1);
+        assert.strictEqual(pool.available, 0);
+        done();
+      } catch (e) {
+        done(e);
+      }
     }, 10);
   });
 
@@ -108,11 +107,12 @@ describe('Acquiring', function() {
           max: 1,
           maxQueue: 1
         });
-    var i = 0;
+    let i = 0;
     const acquire = function() {
       pool.acquire(function(err, obj) {
         if (++i === 1) {
           assert(err);
+          assert(!obj);
           done();
         }
       });
@@ -128,11 +128,13 @@ describe('Acquiring', function() {
       acquireTimeoutMillis: 15,
       max: 1
     });
-    pool.acquire(function(err, obj) {
+    pool.acquire((err, obj) => {
       assert(!err, err);
+      assert(obj);
     });
-    pool.acquire(function(err, obj) {
+    pool.acquire((err, obj) => {
       assert(err);
+      assert(!obj);
       done();
     });
   });
@@ -144,21 +146,23 @@ describe('Acquiring', function() {
     }), {
       acquireTimeoutMillis: 10
     });
-    pool.acquire(function(err, obj) {
+    pool.acquire((err, obj) => {
       assert(err);
+      assert(!obj);
     });
-    pool.acquire(function(err, obj) {
+    pool.acquire((err, obj) => {
       assert(err);
+      assert(!obj);
       done();
     });
   });
 
   it('should cancel retry if create aborted', function(done) {
-    var i = 0;
+    let i = 0;
     pool = createPool(new TestFactory({
       acquireWait: 20,
       retryTest: 5,
-      create: function(callback) {
+      create: (callback) => {
         if (!i++)
           return callback.abort();
         callback.abort(new Error('Custom reason'));
@@ -166,19 +170,20 @@ describe('Acquiring', function() {
     }), {
       acquireTimeoutMillis: 10
     });
-    pool.acquire(function(err, obj) {
+    pool.acquire((err, obj) => {
       assert(err);
+      assert(!obj);
     });
-    pool.acquire(function(err, obj) {
+    pool.acquire((err, obj) => {
       assert(err);
-      assert.equal(i, 2);
+      assert(!obj);
+      assert.strictEqual(i, 2);
       done();
     });
   });
 
   it('should fail when retry limit exceeds', function(done) {
-    pool = createPool(new TestFactory(
-        {
+    pool = createPool(new TestFactory({
           retryTest: 5,
           create: function() {
             throw new Error('test');
@@ -190,20 +195,21 @@ describe('Acquiring', function() {
     });
     pool.acquire(function(err, obj) {
       assert(err);
+      assert(!obj);
       done();
     });
   });
 
   it('should destroy idle resource after timeout', function(done) {
-    var t;
-    var o;
+    let t;
+    let o;
     pool = createPool(new TestFactory(), {
       idleTimeoutMillis: 20,
       houseKeepInterval: 1
     });
-    pool.on('destroy', function(obj) {
+    pool.on('destroy', (obj) => {
       try {
-        assert.equal(o, obj);
+        assert.strictEqual(o, obj);
         const i = Date.now() - t;
         assert(i >= 20 && i < 40);
         done();
@@ -212,27 +218,27 @@ describe('Acquiring', function() {
       }
     });
 
-    pool.acquire(function(err, obj) {
+    pool.acquire((err, obj) => {
       try {
         assert(!err);
         o = obj;
         pool.release(obj);
         t = Date.now();
       } catch (e) {
-        return done(e);
+        done(e);
       }
     });
   });
 
   it('should keep max while resource creating', function(done) {
     this.slow(100);
-    var i = 0;
+    let i = 0;
     const factory = new TestFactory();
     factory.create = function() {
       const args = arguments;
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         if (!i++) {
-          setTimeout(function() {
+          setTimeout(() => {
             resolve(TestFactory.prototype.create.apply(factory, args));
           }, 5);
         } else
@@ -248,7 +254,7 @@ describe('Acquiring', function() {
     pool.acquire((err, obj) => {
       try {
         assert(!err, err);
-        assert.equal(obj.id, 2);
+        assert.strictEqual(obj.id, 2);
       } catch (e) {
         done(e);
       }
@@ -256,7 +262,7 @@ describe('Acquiring', function() {
     pool.acquire((err, obj) => {
       try {
         assert(!err, err);
-        assert.equal(obj.id, 1);
+        assert.strictEqual(obj.id, 1);
         pool.release(obj);
       } catch (e) {
         done(e);
@@ -273,10 +279,10 @@ describe('Acquiring', function() {
 
     setTimeout(() => {
       try {
-        assert.equal(pool.size, 2);
-        assert.equal(pool.acquired, 1);
-        assert.equal(pool.available, 1);
-        assert.equal(pool.creating, 0);
+        assert.strictEqual(pool.size, 2);
+        assert.strictEqual(pool.acquired, 1);
+        assert.strictEqual(pool.available, 1);
+        assert.strictEqual(pool.creating, 0);
         done();
       } catch (e) {
         done(e);
@@ -285,7 +291,7 @@ describe('Acquiring', function() {
   });
 
   it('should acquire in fifo order default', function(done) {
-    var k = 0;
+    let k = 0;
     pool = createPool(new TestFactory(
         {resetWait: 1}
     ));
@@ -299,7 +305,7 @@ describe('Acquiring', function() {
       if (++k === 2) {
         pool.acquire(function(err, obj) {
           assert(!err, err);
-          assert.equal(obj.id, 1);
+          assert.strictEqual(obj.id, 1);
           done();
         });
       }
@@ -310,7 +316,7 @@ describe('Acquiring', function() {
   });
 
   it('should acquire in lifo order', function(done) {
-    var k = 0;
+    let k = 0;
     pool = createPool(new TestFactory(
         {resetWait: 1}
     ), {
@@ -326,7 +332,7 @@ describe('Acquiring', function() {
       if (++k === 2) {
         pool.acquire(function(err, obj) {
           assert(!err, err);
-          assert.equal(obj.id, 2);
+          assert.strictEqual(obj.id, 2);
           done();
         });
       }
@@ -340,8 +346,8 @@ describe('Acquiring', function() {
     pool = createPool(new TestFactory());
     pool.acquire(function(err, obj) {
       assert(!err, err);
-      assert.equal(true, pool.isAcquired(obj));
-      assert.equal(false, pool.isAcquired({}));
+      assert.strictEqual(true, pool.isAcquired(obj));
+      assert.strictEqual(false, pool.isAcquired({}));
       done();
     });
   });
@@ -350,8 +356,8 @@ describe('Acquiring', function() {
     pool = createPool(new TestFactory());
     pool.acquire(function(err, obj) {
       assert(!err, err);
-      assert.equal(true, pool.includes(obj));
-      assert.equal(false, pool.includes({}));
+      assert.strictEqual(true, pool.includes(obj));
+      assert.strictEqual(false, pool.includes({}));
       done();
     });
   });

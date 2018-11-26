@@ -4,7 +4,7 @@ const {createPool} = require('../');
 const TestFactory = require('./TestFactory');
 
 describe('Validating', function() {
-  var pool;
+  let pool;
 
   afterEach(function() {
     return pool.close(true);
@@ -16,8 +16,8 @@ describe('Validating', function() {
     return pool.acquire().then(obj => {
       return pool.release(obj).then(() => {
         return pool.acquire().then(obj => {
-          assert.equal(obj.id, 1);
-          assert.equal(obj.validateCount, 1);
+          assert.strictEqual(obj.id, 1);
+          assert.strictEqual(obj.validateCount, 1);
           return pool.release(obj);
         });
       });
@@ -27,19 +27,19 @@ describe('Validating', function() {
 
   it('should validate on borrow and remove if error', function() {
     pool = createPool(new TestFactory({
-      validate: function(res) {
+      validate: () => {
         throw new Error('Validate error');
       }
     }), {
       validation: true
     });
 
-    return pool.acquire().then(obj=>{
-      return pool.release(obj).then(()=>{
-        return pool.acquire().then(obj=>{
-          assert.equal(pool.size, 1);
+    return pool.acquire().then(obj => {
+      return pool.release(obj).then(() => {
+        return pool.acquire().then(obj => {
+          assert.strictEqual(pool.size, 1);
           return pool.release(obj);
-        })
+        });
       });
     });
   });
@@ -49,18 +49,18 @@ describe('Validating', function() {
     pool = createPool(new TestFactory(), {
       validation: false
     });
-    const acquire = function() {
-      pool.acquire(function(err, obj) {
+    const acquire = () => {
+      pool.acquire((err, obj) => {
         assert(!err, err);
         pool.release(obj);
       });
     };
-    pool.on('return', function() {
+    pool.on('return', () => {
       if (++k === 2) {
-        pool.acquire(function(err, obj) {
+        pool.acquire((err, obj) => {
           assert(!err, err);
-          assert.equal(obj.id, 1);
-          assert.equal(obj.validateCount, 0);
+          assert.strictEqual(obj.id, 1);
+          assert.strictEqual(obj.validateCount, 0);
           done();
         });
       }

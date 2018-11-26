@@ -4,7 +4,7 @@ const lightningPool = require('../');
 const TestFactory = require('./TestFactory');
 
 describe('Ensuring min resources', function() {
-  var pool;
+  let pool;
 
   afterEach(function() {
     pool.close(true);
@@ -20,9 +20,9 @@ describe('Ensuring min resources', function() {
     }, 10);
 
     setTimeout(function() {
-      assert.equal(pool.size, 2);
-      assert.equal(pool.available, 1);
-      assert.equal(pool.acquired, 1);
+      assert.strictEqual(pool.size, 2);
+      assert.strictEqual(pool.available, 1);
+      assert.strictEqual(pool.acquired, 1);
       done();
     }, 20);
   });
@@ -37,9 +37,9 @@ describe('Ensuring min resources', function() {
     }, 10);
 
     setTimeout(function() {
-      assert.equal(pool.size, 3);
-      assert.equal(pool.available, 2);
-      assert.equal(pool.acquired, 1);
+      assert.strictEqual(pool.size, 3);
+      assert.strictEqual(pool.available, 2);
+      assert.strictEqual(pool.acquired, 1);
       done();
     }, 20);
   });
@@ -55,9 +55,9 @@ describe('Ensuring min resources', function() {
     }, 10);
 
     setTimeout(function() {
-      assert.equal(pool.size, 4);
-      assert.equal(pool.available, 3);
-      assert.equal(pool.acquired, 1);
+      assert.strictEqual(pool.size, 4);
+      assert.strictEqual(pool.available, 3);
+      assert.strictEqual(pool.acquired, 1);
       done();
     }, 20);
   });

@@ -4,7 +4,7 @@ const lightningPool = require('../');
 const TestFactory = require('./TestFactory');
 
 describe('Releasing', function() {
-  var pool;
+  let pool;
 
   afterEach(function() {
     return pool.close(true);
@@ -15,26 +15,26 @@ describe('Releasing', function() {
         {
           max: 3
         });
-    var o;
-    const acquire = function() {
-      pool.acquire(function(err, obj) {
+    let o;
+    const acquire = () => {
+      pool.acquire((err, obj) => {
         assert(!err, err);
         o = o || obj;
       });
     };
     acquire();
     acquire();
-    setTimeout(function() {
-      assert.equal(pool.size, 2);
-      assert.equal(pool.acquired, 2);
-      assert.equal(pool.pending, 0);
-      assert.equal(pool.available, 0);
-      pool.once('return', function(obj) {
-        assert.equal(obj, o);
-        assert.equal(pool.size, 2);
-        assert.equal(pool.acquired, 1);
-        assert.equal(pool.pending, 0);
-        assert.equal(pool.available, 1);
+    setTimeout(() => {
+      assert.strictEqual(pool.size, 2);
+      assert.strictEqual(pool.acquired, 2);
+      assert.strictEqual(pool.pending, 0);
+      assert.strictEqual(pool.available, 0);
+      pool.once('return', (obj) => {
+        assert.strictEqual(obj, o);
+        assert.strictEqual(pool.size, 2);
+        assert.strictEqual(pool.acquired, 1);
+        assert.strictEqual(pool.pending, 0);
+        assert.strictEqual(pool.available, 1);
         done();
       });
       pool.release(o);
@@ -56,16 +56,16 @@ describe('Releasing', function() {
     acquire();
     acquire();
     setTimeout(function() {
-      assert.equal(pool.size, 2);
-      assert.equal(pool.acquired, 2);
-      assert.equal(pool.pending, 0);
-      assert.equal(pool.available, 0);
+      assert.strictEqual(pool.size, 2);
+      assert.strictEqual(pool.acquired, 2);
+      assert.strictEqual(pool.pending, 0);
+      assert.strictEqual(pool.available, 0);
       pool.once('destroy', function(obj) {
-        assert.equal(obj, o);
-        assert.equal(pool.size, 1);
-        assert.equal(pool.acquired, 1);
-        assert.equal(pool.pending, 0);
-        assert.equal(pool.available, 0);
+        assert.strictEqual(obj, o);
+        assert.strictEqual(pool.size, 1);
+        assert.strictEqual(pool.acquired, 1);
+        assert.strictEqual(pool.pending, 0);
+        assert.strictEqual(pool.available, 0);
         done();
       });
       pool.destroy(o);
@@ -76,10 +76,11 @@ describe('Releasing', function() {
     pool = lightningPool.createPool(new TestFactory());
     pool.acquire(function(err, obj) {
       assert(!err, err);
+      assert(obj);
       pool.release(1);
     });
     setTimeout(function() {
-      assert.equal(pool.size, 1);
+      assert.strictEqual(pool.size, 1);
       done();
     }, 10);
   });
@@ -88,10 +89,11 @@ describe('Releasing', function() {
     pool = lightningPool.createPool(new TestFactory());
     pool.acquire(function(err, obj) {
       assert(!err, err);
+      assert(obj);
       pool.destroy(1);
     });
     setTimeout(function() {
-      assert.equal(pool.size, 1);
+      assert.strictEqual(pool.size, 1);
       done();
     }, 10);
   });
@@ -127,10 +129,10 @@ describe('Releasing', function() {
     acquire();
     acquire();
     setTimeout(function() {
-      assert.equal(pool.size, 1);
-      assert.equal(pool.acquired, 0);
-      assert.equal(pool.pending, 0);
-      assert.equal(pool.available, 1);
+      assert.strictEqual(pool.size, 1);
+      assert.strictEqual(pool.acquired, 0);
+      assert.strictEqual(pool.pending, 0);
+      assert.strictEqual(pool.available, 1);
       done();
     }, 20);
   });
@@ -155,33 +157,33 @@ describe('Releasing', function() {
     acquire();
     acquire();
     setTimeout(function() {
-      assert.equal(pool.size, 1);
-      assert.equal(pool.acquired, 0);
-      assert.equal(pool.pending, 0);
-      assert.equal(pool.available, 1);
+      assert.strictEqual(pool.size, 1);
+      assert.strictEqual(pool.acquired, 0);
+      assert.strictEqual(pool.pending, 0);
+      assert.strictEqual(pool.available, 1);
       done();
     }, 40);
   });
 
   it('should destroy on reset error', function() {
     pool = lightningPool.createPool(new TestFactory({
-      reset: function(obj) {
+      reset: function() {
         throw new Error('Any reset error');
       }
     }));
     return pool.acquire().then(obj => {
       return pool.release(obj).then(() => {
-        assert.equal(pool.size, 0);
-        assert.equal(pool.acquired, 0);
-        assert.equal(pool.pending, 0);
-        assert.equal(pool.available, 0);
+        assert.strictEqual(pool.size, 0);
+        assert.strictEqual(pool.acquired, 0);
+        assert.strictEqual(pool.pending, 0);
+        assert.strictEqual(pool.available, 0);
       });
     });
   });
 
   it('should emit destroy-error', function(done) {
     pool = lightningPool.createPool(new TestFactory({
-      destroy: function(obj, callback) {
+      destroy: function() {
         throw new Error('Any error');
       }
     }), {
@@ -189,7 +191,7 @@ describe('Releasing', function() {
       houseKeepInterval: 5
     });
     pool.on('destroy-error', function() {
-      assert.equal(pool.size, 0);
+      assert.strictEqual(pool.size, 0);
       done();
     });
 

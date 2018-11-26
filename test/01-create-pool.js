@@ -5,311 +5,260 @@ const TestFactory = require('./TestFactory');
 
 describe('Creating pool', function() {
 
-  var pool;
+  let pool;
 
   it('should createPool must be a function', function(done) {
     pool = lightningPool.createPool(new TestFactory());
-    assert.equal(typeof lightningPool.createPool, 'function');
+    assert.strictEqual(typeof lightningPool.createPool, 'function');
     done();
   });
 
-  it('should pass validate `factory` argument', function(done) {
-    try {
+  it('should pass validate `factory` argument', function() {
+    assert.throws(() => {
       lightningPool.createPool();
-    } catch (e) {
-      return done();
-    }
-    assert(0, 'Failed');
+    }, /You must provide/);
   });
 
-  it('should check `factory` object must have a `create` function property', function(done) {
-    var i = 0;
-    try {
+  it('should check `factory` object must have a `create` function property', function() {
+    assert.throws(() => {
       lightningPool.createPool({});
-    } catch (e) {
-      i++;
-    }
-    assert.equal(i, 1, 'Failed');
-    try {
+    }, /factory.create must be a function/);
+    assert.throws(() => {
       lightningPool.createPool({create: 'abc'});
-    } catch (e) {
-      i++;
-    }
-    assert.equal(i, 2, 'Failed');
-    done();
+    }, /factory.create must be a function/);
   });
 
-  it('should check `factory` object must have a `destroy` function property', function(done) {
-    var i = 0;
-    try {
+  it('should check `factory` object must have a `destroy` function property', function() {
+    assert.throws(() => {
       lightningPool.createPool({
-        create: function() {}
+        create: () => {}
       });
-    } catch (e) {
-      i++;
-    }
-    assert.equal(i, 1, 'Failed');
-    try {
+    }, /factory.destroy must be a function/);
+    assert.throws(() => {
       lightningPool.createPool({
-        create: function() {},
+        create: () => {},
         destroy: 'abc'
       });
-    } catch (e) {
-      i++;
-    }
-    assert.equal(i, 2, 'Failed');
-    lightningPool.createPool({
-      create: function() {},
-      destroy: function() {}
-    });
-    done();
+    }, /factory.destroy must be a function/);
+    assert(
+        lightningPool.createPool({
+          create: function() {},
+          destroy: function() {}
+        }) instanceof lightningPool.Pool);
   });
 
-  it('should check `factory` object can have a `validate` function property', function(done) {
-    var i = 0;
-    try {
+  it('should check `factory` object can have a `validate` function property', function() {
+    assert.throws(() => {
       lightningPool.createPool({
         create: function() {},
         destroy: function() {},
         validate: 'abc'
       });
-    } catch (e) {
-      i++;
-    }
-    assert.equal(i, 1, 'Failed');
-    lightningPool.createPool({
-      create: function() {},
-      destroy: function() {},
-      validate: function() {}
-    });
-    done();
+    }, /factory.validate can be a function/);
+    assert(
+        lightningPool.createPool({
+          create: function() {},
+          destroy: function() {},
+          validate: function() {}
+        }) instanceof lightningPool.Pool);
   });
 
-  it('should check `factory` object can have a `reset` function property', function(done) {
-    var i = 0;
-    try {
+  it('should check `factory` object can have a `reset` function property', function() {
+    assert.throws(() => {
       lightningPool.createPool({
         create: function() {},
         destroy: function() {},
         reset: 'abc'
       });
-    } catch (e) {
-      i++;
-    }
-    assert.equal(i, 1, 'Failed');
-    lightningPool.createPool({
-      create: function() {},
-      destroy: function() {},
-      reset: function() {}
-    });
-    done();
+    }, /factory.reset can be a function/);
+    assert(
+        lightningPool.createPool({
+          create: function() {},
+          destroy: function() {},
+          reset: function() {}
+        }) instanceof lightningPool.Pool);
   });
 
-  it('should createPool returns Pool instance', function(done) {
+  it('should createPool returns Pool instance', function() {
     pool = lightningPool.createPool(new TestFactory());
     assert(pool instanceof lightningPool.Pool);
-    done();
   });
 
-  it('should default acquireMaxRetries option must be 0', function(done) {
+  it('should default acquireMaxRetries option must be 0', function() {
     pool = lightningPool.createPool(new TestFactory());
-    assert.deepEqual(pool.options.acquireMaxRetries, 0);
-    done();
+    assert.deepStrictEqual(pool.options.acquireMaxRetries, 0);
   });
 
-  it('should set acquireMaxRetries option', function(done) {
+  it('should set acquireMaxRetries option', function() {
     pool = lightningPool.createPool(new TestFactory(),
         {acquireMaxRetries: 3});
-    assert.equal(pool.options.acquireMaxRetries, 3);
+    assert.strictEqual(pool.options.acquireMaxRetries, 3);
     pool = lightningPool.createPool(new TestFactory(),
         {acquireMaxRetries: 0});
-    assert.equal(pool.options.acquireMaxRetries, 0);
-    done();
+    assert.strictEqual(pool.options.acquireMaxRetries, 0);
   });
 
-  it('should default acquireRetryWait option must be 2000', function(done) {
+  it('should default acquireRetryWait option must be 2000', function() {
     pool = lightningPool.createPool(new TestFactory());
-    assert.equal(pool.options.acquireRetryWait, 2000);
-    done();
+    assert.strictEqual(pool.options.acquireRetryWait, 2000);
   });
 
-  it('should set acquireRetryWait option', function(done) {
+  it('should set acquireRetryWait option', function() {
     pool = lightningPool.createPool(new TestFactory(),
         {acquireRetryWait: 3});
-    assert.equal(pool.options.acquireRetryWait, 3);
+    assert.strictEqual(pool.options.acquireRetryWait, 3);
     pool = lightningPool.createPool(new TestFactory(),
         {acquireRetryWait: 0});
-    assert.equal(pool.options.acquireRetryWait, 0);
-    done();
+    assert.strictEqual(pool.options.acquireRetryWait, 0);
   });
 
-  it('should default acquireTimeoutMillis option must be 0', function(done) {
+  it('should default acquireTimeoutMillis option must be 0', function() {
     pool = lightningPool.createPool(new TestFactory());
     assert.deepEqual(pool.options.acquireTimeoutMillis, 0);
-    done();
   });
 
-  it('should set acquireTimeoutMillis option', function(done) {
+  it('should set acquireTimeoutMillis option', function() {
     pool = lightningPool.createPool(new TestFactory(),
         {acquireTimeoutMillis: 20000});
-    assert.equal(pool.options.acquireTimeoutMillis, 20000);
+    assert.strictEqual(pool.options.acquireTimeoutMillis, 20000);
     pool = lightningPool.createPool(new TestFactory(),
         {acquireTimeoutMillis: 0});
-    assert.equal(pool.options.acquireTimeoutMillis, 0);
-    done();
+    assert.strictEqual(pool.options.acquireTimeoutMillis, 0);
   });
 
-  it('should default fifo option must be true', function(done) {
+  it('should default fifo option must be true', function() {
     pool = lightningPool.createPool(new TestFactory());
-    assert.deepEqual(pool.options.fifo, true);
-    done();
+    assert.deepStrictEqual(pool.options.fifo, true);
   });
 
   it('should set fifo option', function(done) {
     pool = lightningPool.createPool(new TestFactory(),
         {fifo: false});
-    assert.deepEqual(pool.options.fifo, false);
+    assert.deepStrictEqual(pool.options.fifo, false);
     done();
   });
 
-  it('should default idleTimeoutMillis option must be 30000', function(done) {
+  it('should default idleTimeoutMillis option must be 30000', function() {
     pool = lightningPool.createPool(new TestFactory());
-    assert.deepEqual(pool.options.idleTimeoutMillis, 30000);
-    done();
+    assert.deepStrictEqual(pool.options.idleTimeoutMillis, 30000);
   });
 
-  it('should set idleTimeoutMillis option', function(done) {
+  it('should set idleTimeoutMillis option', function() {
     pool = lightningPool.createPool(new TestFactory(),
         {idleTimeoutMillis: 30000});
-    assert.equal(pool.options.idleTimeoutMillis, 30000);
+    assert.strictEqual(pool.options.idleTimeoutMillis, 30000);
     pool = lightningPool.createPool(new TestFactory(),
         {idleTimeoutMillis: 0});
-    assert.equal(pool.options.idleTimeoutMillis, 0);
-    done();
+    assert.strictEqual(pool.options.idleTimeoutMillis, 0);
   });
 
-  it('should default houseKeepInterval option must be 1000', function(done) {
+  it('should default houseKeepInterval option must be 1000', function() {
     pool = lightningPool.createPool(new TestFactory());
-    assert.deepEqual(pool.options.houseKeepInterval, 1000);
-    done();
+    assert.deepStrictEqual(pool.options.houseKeepInterval, 1000);
   });
 
-  it('should set houseKeepInterval option', function(done) {
+  it('should set houseKeepInterval option', function() {
     pool = lightningPool.createPool(new TestFactory(),
         {houseKeepInterval: 30000});
-    assert.equal(pool.options.houseKeepInterval, 30000);
+    assert.strictEqual(pool.options.houseKeepInterval, 30000);
     pool = lightningPool.createPool(new TestFactory(),
         {houseKeepInterval: 0});
-    assert.equal(pool.options.houseKeepInterval, 0);
-    done();
+    assert.strictEqual(pool.options.houseKeepInterval, 0);
   });
 
-  it('should default max option must be 10', function(done) {
+  it('should default max option must be 10', function() {
     pool = lightningPool.createPool(new TestFactory());
-    assert.equal(pool.options.max, 10);
-    done();
+    assert.strictEqual(pool.options.max, 10);
   });
 
-  it('should set max option', function(done) {
+  it('should set max option', function() {
     pool = lightningPool.createPool(new TestFactory(),
         {max: 3});
-    assert.equal(pool.options.max, 3);
+    assert.strictEqual(pool.options.max, 3);
     pool = lightningPool.createPool(new TestFactory(),
         {max: 0});
-    assert.equal(pool.options.max, 0);
-    done();
+    assert.strictEqual(pool.options.max, 0);
   });
 
-  it('should default min option must be 0', function(done) {
+  it('should default min option must be 0', function() {
     pool = lightningPool.createPool(new TestFactory());
     assert.deepEqual(pool.options.min, 0);
-    done();
   });
 
-  it('should set min option', function(done) {
+  it('should set min option', function() {
     pool = lightningPool.createPool(new TestFactory(),
         {min: 3});
-    assert.equal(pool.options.min, 3);
+    assert.strictEqual(pool.options.min, 3);
     pool = lightningPool.createPool(new TestFactory(),
         {min: 0});
-    assert.equal(pool.options.min, 0);
-    done();
+    assert.strictEqual(pool.options.min, 0);
   });
 
-  it('should default minIdle option must be 0', function(done) {
+  it('should default minIdle option must be 0', function() {
     pool = lightningPool.createPool(new TestFactory());
-    assert.deepEqual(pool.options.minIdle, 0);
-    done();
+    assert.deepStrictEqual(pool.options.minIdle, 0);
   });
 
-  it('should set minIdle option', function(done) {
+  it('should set minIdle option', function() {
     pool = lightningPool.createPool(new TestFactory(),
         {minIdle: 3});
-    assert.equal(pool.options.minIdle, 3);
+    assert.strictEqual(pool.options.minIdle, 3);
     pool = lightningPool.createPool(new TestFactory(),
         {minIdle: 0});
-    assert.equal(pool.options.minIdle, 0);
-    done();
+    assert.strictEqual(pool.options.minIdle, 0);
   });
 
-  it('should default maxQueue option must be 1000', function(done) {
+  it('should default maxQueue option must be 1000', function() {
     pool = lightningPool.createPool(new TestFactory());
-    assert.equal(pool.options.maxQueue, 1000);
-    done();
+    assert.strictEqual(pool.options.maxQueue, 1000);
   });
 
-  it('should set maxQueue option', function(done) {
+  it('should set maxQueue option', function() {
     pool = lightningPool.createPool(new TestFactory(),
         {maxQueue: 3});
-    assert.equal(pool.options.maxQueue, 3);
+    assert.strictEqual(pool.options.maxQueue, 3);
     pool = lightningPool.createPool(new TestFactory(),
         {maxQueue: 0});
-    assert.equal(pool.options.maxQueue, 0);
-    done();
+    assert.strictEqual(pool.options.maxQueue, 0);
   });
 
-  it('should default resetOnReturn option must be false', function(done) {
+  it('should default resetOnReturn option must be false', function() {
     pool = lightningPool.createPool(new TestFactory());
-    assert.deepEqual(pool.options.resetOnReturn, true);
-    done();
+    assert.deepStrictEqual(pool.options.resetOnReturn, true);
   });
 
-  it('should set resetOnReturn option', function(done) {
+  it('should set resetOnReturn option', function() {
     pool = lightningPool.createPool(new TestFactory(),
         {resetOnReturn: true});
-    assert.deepEqual(pool.options.resetOnReturn, true);
+    assert.deepStrictEqual(pool.options.resetOnReturn, true);
     pool = lightningPool.createPool(new TestFactory(),
         {resetOnReturn: false});
-    assert.deepEqual(pool.options.resetOnReturn, false);
-    done();
+    assert.deepStrictEqual(pool.options.resetOnReturn, false);
   });
 
-  it('should default validation option must be false', function(done) {
+  it('should default validation option must be false', function() {
     pool = lightningPool.createPool(new TestFactory());
-    assert.deepEqual(pool.options.validation, true);
-    done();
+    assert.deepStrictEqual(pool.options.validation, true);
   });
 
-  it('should set validation option', function(done) {
+  it('should set validation option', function() {
     pool = lightningPool.createPool(new TestFactory(),
         {validation: true});
-    assert.deepEqual(pool.options.validation, true);
+    assert.deepStrictEqual(pool.options.validation, true);
     pool = lightningPool.createPool(new TestFactory(),
         {validation: false});
-    assert.deepEqual(pool.options.validation, false);
-    done();
+    assert.deepStrictEqual(pool.options.validation, false);
   });
 
-  it('should prevent malformed min max options', function(done) {
+  it('should prevent malformed min max options', function() {
     pool = lightningPool.createPool(new TestFactory(),
         {min: 0, max: 5});
     pool.options.min = 6;
-    assert.equal(pool.options.min, 6);
-    assert.equal(pool.options.max, 6);
+    assert.strictEqual(pool.options.min, 6);
+    assert.strictEqual(pool.options.max, 6);
     pool.options.max = 3;
-    assert.equal(pool.options.min, 3);
-    assert.equal(pool.options.max, 3);
-    done();
+    assert.strictEqual(pool.options.min, 3);
+    assert.strictEqual(pool.options.max, 3);
   });
-});
 
+});
