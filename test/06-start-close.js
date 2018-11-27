@@ -28,16 +28,16 @@ describe('Start/Close', function() {
 
   it('should not start a closed pool again', function() {
     pool.start();
-    return pool.close().then(() => {
-      assert.rejects(() => pool.acquire());
-    });
+    return pool.close().then(() =>
+        assert.rejects(() => pool.acquire())
+    );
   });
 
   it('should not acquire from a closed pool', function() {
     pool.start();
-    return pool.close().then(() => {
-      assert.rejects(() => pool.acquire());
-    });
+    return pool.close().then(() =>
+        assert.rejects(() => pool.acquire())
+    );
   });
 
 });

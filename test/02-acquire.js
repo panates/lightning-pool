@@ -79,7 +79,7 @@ describe('Acquiring', function() {
           }
         }
     ));
-    assert.rejects(() => pool.acquire());
+    return assert.rejects(() => pool.acquire());
   });
 
   it('should not exceed resource limit', function(done) {
