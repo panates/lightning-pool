@@ -13,16 +13,16 @@
     "pool"
   ],
   "dependencies": {
-    "doublylinked": "^2.0.1",
-    "errorex": "^2.3.0",
-    "putil-promisify": "^1.3.0"
+    "doublylinked": "^2.2.0",
+    "errorex": "^2.3.2",
+    "putil-promisify": "^1.4.0"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.16.0",
-    "eslint-config-google": "^0.12.0",
-    "mocha": "^6.1.2",
-    "nyc": "^13.3.0",
+    "babel-eslint": "^10.0.2",
+    "eslint": "^6.1.0",
+    "eslint-config-google": "^0.13.0",
+    "mocha": "^6.2.0",
+    "nyc": "^14.1.1",
     "rejected-or-not": "^1.0.1"
   },
   "engines": {
