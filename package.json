@@ -15,13 +15,13 @@
   "dependencies": {
     "doublylinked": "^2.2.1",
     "errorex": "^2.3.2",
-    "putil-promisify": "^1.4.0"
+    "putil-promisify": "^1.6.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
-    "eslint": "^6.2.2",
-    "eslint-config-google": "^0.13.0",
-    "mocha": "^6.2.0",
+    "eslint": "^6.7.2",
+    "eslint-config-google": "^0.14.0",
+    "mocha": "^6.2.2",
     "nyc": "^14.1.1",
     "rejected-or-not": "^1.0.1"
   },
