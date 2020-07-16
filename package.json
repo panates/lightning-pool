@@ -13,20 +13,19 @@
     "pool"
   ],
   "dependencies": {
-    "doublylinked": "^2.2.3",
+    "doublylinked": "^2.2.4",
     "errorex": "^2.3.2",
-    "putil-promisify": "^1.7.1"
+    "putil-promisify": "^1.7.2"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.8.0",
+    "eslint": "^7.4.0",
     "eslint-config-google": "^0.14.0",
-    "mocha": "^7.1.1",
-    "nyc": "^15.0.1",
-    "rejected-or-not": "^1.0.1"
+    "mocha": "^8.0.1",
+    "nyc": "^15.1.0",
+    "rejected-or-not": "^2.0.0"
   },
   "engines": {
-    "node": ">= 6.0"
+    "node": ">= 8.0"
   },
   "directories": {
     "lib": "./lib"
