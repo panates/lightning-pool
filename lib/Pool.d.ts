@@ -21,7 +21,7 @@ export interface IPoolFactory {
     validate(resource: any): Promise<void>;
 }
 
-export default class Pool {
+export class Pool {
     public readonly acquired: number;
     public readonly available: number;
     public readonly creating: number;

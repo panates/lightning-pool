@@ -1,8 +1,8 @@
-import Pool, {IPoolFactory} from './Pool';
+import {Pool, IPoolFactory} from './Pool';
 import type {PoolOptions} from './PoolOptions';
 
 export {IPoolFactory, PoolState} from './Pool';
-export {PoolOptions};
+export {PoolOptions, Pool};
 
 export class AbortError extends Error {
 }
