@@ -12,4 +12,3 @@ export declare class PoolOptions {
     public resetOnReturn: boolean;
     public validation: boolean;
 }
-
