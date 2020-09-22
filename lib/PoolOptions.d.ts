@@ -1,4 +1,4 @@
-export default class PoolOptions {
+export declare class PoolOptions {
     public acquireMaxRetries: number;
     public acquireRetryWait: number;
     public acquireTimeoutMillis: number;

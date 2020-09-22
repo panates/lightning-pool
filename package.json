@@ -18,23 +18,24 @@
     "putil-promisify": "^1.7.2"
   },
   "devDependencies": {
-    "eslint": "^7.7.0",
+    "eslint": "^7.9.0",
     "eslint-config-google": "^0.14.0",
-    "mocha": "^8.1.1",
+    "mocha": "^8.1.3",
     "nyc": "^15.1.0",
     "rejected-or-not": "^2.0.0"
   },
   "engines": {
-    "node": ">= 8.0"
+    "node": ">= 10.0"
   },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "directories": {
     "lib": "./lib"
   },
   "files": [
     "LICENSE",
     "README.md",
-    "lib/",
-    "index.js"
+    "lib/"
   ],
   "nyc": {
     "temp-dir": "./coverage/.nyc_output"
