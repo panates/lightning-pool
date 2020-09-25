@@ -30,19 +30,22 @@ export class Pool {
     public readonly state: PoolState;
     public readonly options: PoolOptions;
 
-    acquire(callback?: (resource: any) => void): Maybe<Promise<any>>;
+    acquire(): Promise<any>;
+    acquire(callback: (resource: any) => void): void;
 
     isAcquired(resource: any): boolean;
 
     includes(resource: any): boolean;
 
-    release(resource: any, callback?: (resource: any) => void): Maybe<Promise<any>>;
+    release(resource: any): Promise<void>;
+    release(resource: any, callback: () => void): void;
 
-    destroy(resource: any);
+    destroy(resource: any): void;
 
     start(): void;
 
-    close(force?: boolean, callback?: () => void): Maybe<Promise<void>>;
+    close(force?: boolean): Promise<void>;
+    close(force: boolean, callback: () => void): void;
 
     emitSafe(event: string, ...args);
 }
