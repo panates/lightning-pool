@@ -1,8 +1,5 @@
-/// <reference lib="es2015.symbol" />
-
-type Maybe<T> = T | void;
-
 import {PoolOptions} from "./PoolOptions";
+import {EventEmitter} from 'events';
 
 export enum PoolState {
     IDLE = 0,
@@ -11,17 +8,17 @@ export enum PoolState {
     CLOSED = 3
 }
 
-export interface IPoolFactory {
-    create(info: { tries: number, maxRetries: number }): Promise<any> | any;
+export interface IPoolFactory<T> {
+    create(info: { tries: number, maxRetries: number }): Promise<T> | T;
 
-    destroy(resource: any): Promise<void>;
+    destroy(resource: T): Promise<void> | void;
 
-    reset(resource: any): Promise<void>;
+    reset(resource: T): Promise<void> | void;
 
-    validate(resource: any): Promise<void>;
+    validate(resource: T): Promise<void> | void;
 }
 
-export class Pool {
+export class Pool<T = any> extends EventEmitter {
     public readonly acquired: number;
     public readonly available: number;
     public readonly creating: number;
@@ -30,17 +27,19 @@ export class Pool {
     public readonly state: PoolState;
     public readonly options: PoolOptions;
 
-    acquire(): Promise<any>;
-    acquire(callback: (resource: any) => void): void;
+    constructor(factory: IPoolFactory<T>, options?: PoolOptions);
 
-    isAcquired(resource: any): boolean;
+    acquire(): Promise<T>;
+    acquire(callback: (resource: T) => void): void;
 
-    includes(resource: any): boolean;
+    isAcquired(resource: T): boolean;
 
-    release(resource: any): Promise<void>;
-    release(resource: any, callback: () => void): void;
+    includes(resource: T): boolean;
 
-    destroy(resource: any): void;
+    release(resource: T): Promise<void>;
+    release(resource: T, callback: () => void): void;
+
+    destroy(resource: T): void;
 
     start(): void;
 

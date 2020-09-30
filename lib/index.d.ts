@@ -7,4 +7,4 @@ export {PoolOptions, Pool};
 export class AbortError extends Error {
 }
 
-export function createPool(factory: IPoolFactory, options: PoolOptions): Pool;
+export function createPool<T = any>(factory: IPoolFactory<T>, options: PoolOptions): Pool<T>;

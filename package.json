@@ -18,6 +18,7 @@
     "putil-promisify": "^1.7.2"
   },
   "devDependencies": {
+    "@types/node": "^14.11.2",
     "eslint": "^7.9.0",
     "eslint-config-google": "^0.14.0",
     "mocha": "^8.1.3",
