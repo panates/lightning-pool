@@ -9,6 +9,5 @@ export declare class PoolOptions {
     public minIdle?: number;
     public max?: number;
     public maxQueue?: number;
-    public resetOnReturn?: boolean;
     public validation?: boolean;
 }
