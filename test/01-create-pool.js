@@ -221,21 +221,7 @@ describe('Creating pool', function() {
         {maxQueue: 0});
     assert.strictEqual(pool.options.maxQueue, 0);
   });
-
-  it('should default resetOnReturn option must be false', function() {
-    pool = lightningPool.createPool(new TestFactory());
-    assert.deepStrictEqual(pool.options.resetOnReturn, true);
-  });
-
-  it('should set resetOnReturn option', function() {
-    pool = lightningPool.createPool(new TestFactory(),
-        {resetOnReturn: true});
-    assert.deepStrictEqual(pool.options.resetOnReturn, true);
-    pool = lightningPool.createPool(new TestFactory(),
-        {resetOnReturn: false});
-    assert.deepStrictEqual(pool.options.resetOnReturn, false);
-  });
-
+  
   it('should default validation option must be false', function() {
     pool = lightningPool.createPool(new TestFactory());
     assert.deepStrictEqual(pool.options.validation, true);
