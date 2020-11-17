@@ -1,7 +1,7 @@
 {
   "name": "lightning-pool-benchmaktest",
-  "description": "Benchmak tests for ightning-pool",
-  "version": "1.0.0-alpha.1",
+  "description": "Benchmak tests for lightning-pool",
+  "version": "1.0.0",
   "author": "Panates Ltd.",
   "contributors": [
     "Eray Hanoglu <e.hanoglu@panates.com>"
@@ -9,13 +9,13 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "generic-pool": "^3.4.2",
-    "putil-promisify": "^1.2.0",
-    "putil-waterfall": "^1.2.1"
+    "generic-pool": "^3.7.1",
+    "putil-promisify": "^1.7.2",
+    "putil-waterfall": "^2.1.1"
   },
   "devDependencies": {},
   "engines": {
-    "node": ">= 4.0"
+    "node": ">= 8.0"
   },
   "scripts": {
     "run": "index.js"

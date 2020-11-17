@@ -16,7 +16,7 @@ describe('Start/Close', function() {
   });
 
   afterEach(function() {
-    return pool.close(true);
+    return pool.close(0);
   });
 
   it('should start on acquire', function(done) {
@@ -26,18 +26,38 @@ describe('Start/Close', function() {
     pool.acquire(() => {});
   });
 
-  it('should not start a closed pool again', function() {
+  it('should not start a closed pool again', async function() {
     pool.start();
-    return pool.close().then(() =>
-        assert.rejects(() => pool.acquire())
-    );
+    await pool.close();
+    await assert.rejects(() => pool.acquire());
   });
 
-  it('should not acquire from a closed pool', function() {
+  it('should return Promise if no callback given', function() {
     pool.start();
-    return pool.close().then(() =>
-        assert.rejects(() => pool.acquire())
-    );
+    return pool.close().then();
+  });
+
+  it('should close call callback', function(done) {
+    pool.start();
+    pool.close(done);
+  });
+
+  it('should wait for given amount of ms before terminate ', async function() {
+    pool.start();
+    const res = await pool.acquire();
+    assert.ok(res);
+    const t = Date.now();
+    await pool.close(500);
+    assert.ok(Date.now() - t >= 500);
+  });
+
+  it('should terminate immediately if wait time is 0 ', async function() {
+    pool.start();
+    const res = await pool.acquire();
+    assert.ok(res);
+    const t = Date.now();
+    await pool.close(0);
+    assert.ok(Date.now() - t < 100);
   });
 
 });

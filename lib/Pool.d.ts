@@ -8,6 +8,8 @@ export enum PoolState {
     CLOSED = 3
 }
 
+declare type CallbackFunction = ()=>void;
+
 export interface IPoolFactory<T> {
     create(info: { tries: number, maxRetries: number }): Promise<T> | T;
 
@@ -37,15 +39,16 @@ export class Pool<T = any> extends EventEmitter {
     includes(resource: T): boolean;
 
     release(resource: T): Promise<void>;
-    release(resource: T, callback: () => void): void;
+    release(resource: T, callback: CallbackFunction): void;
 
     destroy(resource: T): void;
 
     start(): void;
 
-    close(force?: boolean): Promise<void>;
-    close(force: boolean, callback: () => void): void;
+    close(): Promise<void>
+    close(callback: CallbackFunction): void
+    close(terminateWait: number, callback?: CallbackFunction): Promise<void>;
+    close(force: boolean, callback?: CallbackFunction): void;
 
-    emitSafe(event: string, ...args);
 }
 
