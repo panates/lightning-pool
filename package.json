@@ -13,37 +13,54 @@
     "pool"
   ],
   "dependencies": {
-    "doublylinked": "^2.4.0",
-    "errorex": "^2.3.2",
-    "putil-promisify": "^1.7.2"
+    "doublylinked": "^2.4.3",
+    "putil-promisify": "^1.8.2"
   },
   "devDependencies": {
+    "@types/mocha": "^8.0.4",
     "@types/node": "^14.14.7",
+    "@typescript-eslint/eslint-plugin": "^4.7.0",
+    "@typescript-eslint/parser": "^4.7.0",
+    "babel-eslint": "^10.1.0",
+    "dotenv": "^8.2.0",
     "eslint": "^7.13.0",
     "eslint-config-google": "^0.14.0",
     "mocha": "^8.2.1",
+    "npm-run-path": "^4.0.1",
     "nyc": "^15.1.0",
-    "rejected-or-not": "^2.0.0"
+    "ts-cleanup": "^0.2.2",
+    "ts-loader": "^8.0.11",
+    "ts-node": "^9.0.0",
+    "ts-mocha": "^8.0.0",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^4.0.5"
   },
   "engines": {
     "node": ">= 10.0"
   },
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "directories": {
-    "lib": "./lib"
+    "lib": "dist",
+    "test": "test"
   },
   "files": [
     "LICENSE",
-    "README.md",
-    "lib/"
+    "README",
+    "dist/"
   ],
   "nyc": {
     "temp-dir": "./coverage/.nyc_output"
   },
   "scripts": {
-    "test": "mocha --require ./test/support/env --reporter spec --bail --check-leaks test/",
-    "cover": "nyc --reporter html --reporter text npm run test",
+    "test": "ts-mocha -p test/tsconfig.json --paths --reporter spec test/**/*.spec.ts",
+    "cover": "nyc --reporter=cobertura --reporter html --reporter text npm run test",
+    "clean": "npm run clean:src && npm run clean:dist",
+    "clean:dist": "ts-cleanup -d dist --remove-dirs --all",
+    "clean:src": "ts-cleanup -s src --all | ts-cleanup -s test",
+    "build": "tsc -b tsconfig-build.json",
+    "compile": "tsc -b tsconfig.json",
+    "lint": "eslint src/** --fix --no-error-on-unmatched-pattern",
     "travis-cover": "nyc --reporter lcovonly npm run test"
   }
 }

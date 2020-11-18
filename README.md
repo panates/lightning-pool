@@ -4,8 +4,6 @@
 [![NPM Downloads][downloads-image]][downloads-url]
 [![Build Status][travis-image]][travis-url]
 [![Test Coverage][coveralls-image]][coveralls-url]
-[![Dependencies][dependencies-image]][dependencies-url]
-[![DevDependencies][devdependencies-image]][devdependencies-url]
 
 ## About
 
@@ -24,87 +22,56 @@ High performance resource pool for NodeJS.
 
 ## Example
 
-```js
-const lightningPool = require('lightning-pool');
-const dbDriver = require('some-db-driver');
+```ts
+import {Pool} from 'lightning-pool';
+import dbDriver from 'some-db-driver';
 
 /**
  * Step 1 - Create a factory object
  */
 const factory = {
-    create: function(opts){
-      return new Promise((resolve, reject) => {
-        DbDriver.createClient((err, client) => {
-          if (err)
-            return reject(err);
-          resolve(client);
-        });  
-      });     
+    create: async function(opts) {
+        const client = await DbDriver.createClient();
+        return client;
     },
-    destroy: function(client){        
-       return new Promise((resolve, reject) => {
-         client.destroy((err) => {
-           if (err)
-             return reject(err);
-               resolve();
-             });  
-           });       
+    destroy: async function(client) {  
+       await client.close();       
     },
-    reset: function(client){        
-       return new Promise((resolve, reject) => {
-         client.rollback((err) => {
-           if (err)
-             return reject(err);
-               resolve();
-             });  
-           });                    
+    reset: async function(client){   
+       await client.rollback();       
     },
-    validate: function(client){        
-       return new Promise((resolve, reject) => {
-         client.execute('some test sql', (err) => {
-           if (err)
-             return reject(err);
-               resolve();
-             });  
-           });      
+    validate: async function(client) {
+       await client.query('select 1');       
     }    
 };
 
 /**
- * Step 1 - Create a the pool object
+ * Step 2 - Create a the pool object
  */
-var opts = {  
+const pool = new Pool(factory, {  
     max: 10,    // maximum size of the pool
     min: 2,     // minimum size of the pool
     minIdle: 2  // minimum idle resources
-}
-
-var pool = lightningPool.createPool(factory, opts)
+});
 
 /**
  * Step 3 - Use pool in your code to acquire/release resources
  */
-
 // acquire connection - Promise is resolved
+const client = await pool.acquire();
 // once a resource becomes available
-pool.acquire().then(client => {  
-  // Use resource
-  client.query("select * from foo", [], function() {
-    // return object back to pool
-	pool.release(client);
-  });  
-}).catch(err => {
-  console.error(err);
-});
-
+// Use resource
+await client.query("select * from foo");
+// return object back to pool
+await pool.release(client);
 
 /**
- * Step 3 - Shutdown pool (optional)
+ * Step 4 - Shutdown pool (optional)
  * Call close(force) when you need to shutdown the pool
  */
-process.on('SIGINT', function() {
-  pool.close(true);
-});
+
+// Wait for active resource for 5 sec than force shutdown
+await pool.close(5000);
 ```
 
 ## Documentation
@@ -113,13 +80,13 @@ process.on('SIGINT', function() {
 
 lightning-pool module exports createPool() method and Pool class. Both can be used to instantiate a Pool. 
 
-```js
-const lightningPool = require('lightning-pool');
-const pool = lightningPool.createPool(factory, options);
+```ts
+import {createPool} from 'lightning-pool';
+const pool = createPool(factory, options);
 ```
 
-```js
-const {Pool} = require('lightning-pool');
+```ts
+import {Pool} from 'lightning-pool';
 const pool = new Pool(factory, options);
 ```
 
@@ -265,12 +232,16 @@ pool.start();
 
 Shuts down the `Pool` and destroys all resources.  
 
-##### Usage (With promise)
+##### Usage
 
-`pool.close([force])`
+`close(callback: Callback): void;`
+`close(terminateWait: number, callback?: Callback): Promise<void>;`
+`close(force: boolean, callback?: Callback): void;`
 
-- `force` (optional): If true, `Pool` will immediately destroy resources instead of waiting to be released (Default false)
-- *Returns*: A Promise
+- `force`: If true, `Pool` will immediately destroy resources instead of waiting to be released
+- `terminateWait`: If specified, `Pool` will wait for active resources to release
+- `callback`: If specified, callback will be called after close. If not specified a promise returns.
+
 
 ```js
 var promise = pool.close();
@@ -391,7 +362,7 @@ Pool.PoolState (Number):
 
 ## Node Compatibility
 
-  - node `>= 4.0`;
+  - node `>= 10.0`;
   
 ### License
 [MIT](LICENSE)
@@ -399,7 +370,7 @@ Pool.PoolState (Number):
 [npm-image]: https://img.shields.io/npm/v/lightning-pool.svg
 [npm-url]: https://npmjs.org/package/lightning-pool
 [travis-image]: https://img.shields.io/travis/panates/lightning-pool/master.svg
-[travis-url]: https://travis-ci.org/panates/lightning-pool
+[travis-url]: https://travis-ci.com/panates/lightning-pool
 [coveralls-image]: https://img.shields.io/coveralls/panates/lightning-pool/master.svg
 [coveralls-url]: https://coveralls.io/r/panates/lightning-pool
 [downloads-image]: https://img.shields.io/npm/dm/lightning-pool.svg

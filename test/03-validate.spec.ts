@@ -1,7 +1,6 @@
-/* eslint-disable */
-const assert = require('assert');
-const {createPool} = require('../');
-const TestFactory = require('./TestFactory');
+import assert from 'assert';
+import {createPool} from '../src';
+import {TestFactory} from './support/TestFactory';
 
 describe('Validating', function() {
   let pool;

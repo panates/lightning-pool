@@ -1,4 +1,3 @@
-const assert = require('assert');
 const genericPool = require('generic-pool');
 const TestFactory = require('./TestFactory');
 
@@ -7,6 +6,8 @@ module.exports = {
   run: runTest,
   clear: clearPool
 };
+
+let pool;
 
 function runTest(options, callback) {
   pool = genericPool.createPool(new TestFactory({
@@ -18,11 +19,11 @@ function runTest(options, callback) {
         evictionRunIntervalMillis: 1000
       });
 
-  var k = 0;
-  var t = 0;
+  let k = 0;
+  let t = 0;
   const testCount = options.testCount;
   const releaseTime = options.releaseTime || 1;
-  for (var i = 0; i < testCount; i++) {
+  for (let i = 0; i < testCount; i++) {
     pool.acquire().then(function(obj) {
       k++;
       t++;

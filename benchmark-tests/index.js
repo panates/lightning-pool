@@ -1,11 +1,11 @@
 const lightningPoolTest = require('./lightning-pool');
 const genericPoolTest = require('./generic-pool');
-const waterfall = require('putil-waterfall');
+const promisify = require('putil-promisify');
 
-const testLoops = 4;
+const testLoops = 2;
 let testId = 0;
 
-function runTest(options, callback) {
+async function runTest(options) {
   console.log('### Starting Test-', ++testId, '###');
   console.log('- Total requests: ', options.testCount);
   console.log('- Test loops: ', testLoops);
@@ -13,8 +13,8 @@ function runTest(options, callback) {
   console.log('- Acquiring Time: ', options.acquireWait, 'ms');
   console.log('- Release After: ', options.releaseTime, 'ms');
   const results = [];
-  var started = Date.now();
-  var total = 0;
+  let started = Date.now();
+  let total = 0;
   const runForAvg = function(k, module, cb) {
     started = Date.now();
     module.run(options, function(err) {
@@ -39,63 +39,48 @@ function runTest(options, callback) {
     console.log(' ');
   };
 
-  waterfall([
-    function(next) {
-      runForAvg(testLoops, lightningPoolTest, next);
-    },
-    function(next) {
-      runForAvg(testLoops, genericPoolTest, next);
-    }
-  ], function(err) {
-    if (err)
-      return callback(err);
-    printResults();
-    callback(null);
-  });
+  await promisify.fromCallback(
+      cb => runForAvg(testLoops, lightningPoolTest, cb));
+  await promisify.fromCallback(
+      cb => runForAvg(testLoops, genericPoolTest, cb));
+  printResults();
 }
 
-waterfall([
-  function(next) {
-    runTest({
-      testCount: 1000,
-      acquireWait: 5,
-      releaseTime: 1,
-      max: 10
-    }, next);
-  }, function(next) {
-    runTest({
-      testCount: 10000,
-      acquireWait: 5,
-      releaseTime: 1,
-      max: 10
-    }, next);
-  }, function(next) {
-    runTest({
-      testCount: 10000,
-      acquireWait: 5,
-      releaseTime: 1,
-      max: 100
-    }, next);
-  }, function(next) {
-    runTest({
-      testCount: 10000,
-      acquireWait: 5,
-      releaseTime: 1,
-      max: 1000
-    }, next);
-  }, function(next) {
-    runTest({
-      testCount: 100000,
-      acquireWait: 5,
-      releaseTime: 1,
-      max: 1000
-    }, next);
-  }
-], function(err) {
-  if (err)
-    return console.log(err);
+async function runAll() {
+  await runTest({
+    testCount: 1000,
+    acquireWait: 0,
+    releaseTime: 1,
+    max: 10
+  });
+  await runTest({
+    testCount: 10000,
+    acquireWait: 0,
+    releaseTime: 1,
+    max: 10
+  });
+  await runTest({
+    testCount: 10000,
+    acquireWait: 0,
+    releaseTime: 1,
+    max: 100
+  });
+  await runTest({
+    testCount: 10000,
+    acquireWait: 0,
+    releaseTime: 1,
+    max: 1000
+  });
+  await runTest({
+    testCount: 100000,
+    acquireWait: 0,
+    releaseTime: 1,
+    max: 1000
+  });
   console.log('******************');
   console.log('All tests complete');
   process.exit(0);
-});
+}
+
+runAll().catch(e => console.error(e));
 

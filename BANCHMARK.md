@@ -25,53 +25,53 @@ You can download [source code](https://github.com/panates/lightning-pool/benchma
 ```bash
 ### Starting Test- 1 ###
 - Total requests:  1000
-- Test loops:  4
+- Test loops:  1
 - Pool Resources:  10
-- Acquiring Time:  5 ms
+- Acquiring Time:  0 ms
 - Release After:  1 ms
-> lightning-pool : Avg  167.25 ms
-> generic-pool : Avg  332.5 ms
-Result: lightning is % 99 faster than generic
+> lightning-pool : Avg  331 ms
+> generic-pool : Avg  501 ms
+Result: lightning is % 51 faster than generic
  
 ### Starting Test- 2 ###
 - Total requests:  10000
-- Test loops:  4
+- Test loops:  1
 - Pool Resources:  10
-- Acquiring Time:  5 ms
+- Acquiring Time:  0 ms
 - Release After:  1 ms
-> lightning-pool : Avg  1520.5 ms
-> generic-pool : Avg  3055.25 ms
-Result: lightning is % 101 faster than generic
+> lightning-pool : Avg  3034 ms
+> generic-pool : Avg  4566 ms
+Result: lightning is % 50 faster than generic
  
 ### Starting Test- 3 ###
 - Total requests:  10000
-- Test loops:  4
+- Test loops:  1
 - Pool Resources:  100
-- Acquiring Time:  5 ms
+- Acquiring Time:  0 ms
 - Release After:  1 ms
-> lightning-pool : Avg  176.5 ms
-> generic-pool : Avg  401.5 ms
-Result: lightning is % 127 faster than generic
+> lightning-pool : Avg  365 ms
+> generic-pool : Avg  561 ms
+Result: lightning is % 54 faster than generic
  
 ### Starting Test- 4 ###
 - Total requests:  10000
-- Test loops:  4
+- Test loops:  1
 - Pool Resources:  1000
-- Acquiring Time:  5 ms
+- Acquiring Time:  0 ms
 - Release After:  1 ms
-> lightning-pool : Avg  61.25 ms
-> generic-pool : Avg  216.5 ms
-Result: lightning is % 253 faster than generic
+> lightning-pool : Avg  71 ms
+> generic-pool : Avg  119 ms
+Result: lightning is % 68 faster than generic
  
 ### Starting Test- 5 ###
 - Total requests:  100000
-- Test loops:  4
+- Test loops:  1
 - Pool Resources:  1000
-- Acquiring Time:  5 ms
+- Acquiring Time:  0 ms
 - Release After:  1 ms
-> lightning-pool : Avg  644 ms
-> generic-pool : Avg  2424.75 ms
-Result: lightning is % 277 faster than generic
+> lightning-pool : Avg  753 ms
+> generic-pool : Avg  1420 ms
+Result: lightning is % 89 faster than generic
  
 ******************
 All tests complete

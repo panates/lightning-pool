@@ -1,5 +1,5 @@
 const assert = require('assert');
-const lightningPool = require('../');
+const {createPool} = require('../');
 const TestFactory = require('./TestFactory');
 
 module.exports = {
@@ -8,8 +8,10 @@ module.exports = {
   clear: clearPool
 };
 
+let pool;
+
 function runTest(options, callback) {
-  pool = lightningPool.createPool(new TestFactory({
+  pool = createPool(new TestFactory({
         acquireWait: options.acquireWait,
         usePromise: options.usePromise
       }),
@@ -18,19 +20,25 @@ function runTest(options, callback) {
         maxQueue: options.testCount
       });
 
-  var k = 0;
+  let k = 0;
+  let t = 0;
   const testCount = options.testCount;
   const releaseTime = options.releaseTime || 1;
-  for (var i = 0; i < testCount; i++) {
+  for (let i = 0; i < testCount; i++) {
     pool.acquire(function(err, obj) {
       assert(!err, err);
       k++;
+      t++;
       setTimeout(function() {
-        pool.release(obj);
-        if (k === testCount) {
-          k = 0;
-          callback();
-        }
+        pool.release(obj).then(function() {
+          t--;
+          if (k === testCount && t === 0) {
+            k = 0;
+            callback();
+          }
+        }).catch(function(e) {
+          throw e;
+        });
       }, releaseTime);
     });
   }

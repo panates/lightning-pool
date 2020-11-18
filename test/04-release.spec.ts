@@ -1,7 +1,6 @@
-/* eslint-disable */
-const assert = require('assert');
-const lightningPool = require('../');
-const TestFactory = require('./TestFactory');
+import assert from 'assert';
+import {createPool} from '../src';
+import {TestFactory} from './support/TestFactory';
 
 describe('Releasing', function() {
   let pool;
@@ -11,7 +10,7 @@ describe('Releasing', function() {
   });
 
   it('should release with pool.release()', function(done) {
-    pool = lightningPool.createPool(new TestFactory(),
+    pool = createPool(new TestFactory(),
         {
           max: 3
         });
@@ -42,7 +41,7 @@ describe('Releasing', function() {
   });
 
   it('should destroy with pool.destroy()', function(done) {
-    pool = lightningPool.createPool(new TestFactory(),
+    pool = createPool(new TestFactory(),
         {
           max: 3
         });
@@ -73,7 +72,7 @@ describe('Releasing', function() {
   });
 
   it('should not release if resource is not in pool', function(done) {
-    pool = lightningPool.createPool(new TestFactory());
+    pool = createPool(new TestFactory());
     pool.acquire(function(err, obj) {
       assert(!err, err);
       assert(obj);
@@ -86,7 +85,7 @@ describe('Releasing', function() {
   });
 
   it('should not destroy if resource is not in pool', function(done) {
-    pool = lightningPool.createPool(new TestFactory());
+    pool = createPool(new TestFactory());
     pool.acquire(function(err, obj) {
       assert(!err, err);
       assert(obj);
@@ -99,7 +98,7 @@ describe('Releasing', function() {
   });
 
   it('should not release if already idle', function(done) {
-    pool = lightningPool.createPool(new TestFactory());
+    pool = createPool(new TestFactory());
     pool.acquire(function(err, obj) {
       assert(!err, err);
       pool.release(obj);
@@ -111,7 +110,7 @@ describe('Releasing', function() {
   });
 
   it('should release but keep min', function(done) {
-    pool = lightningPool.createPool(new TestFactory(),
+    pool = createPool(new TestFactory(),
         {
           min: 1,
           idleTimeoutMillis: 1,
@@ -139,7 +138,7 @@ describe('Releasing', function() {
 
   it('should release but keep minIdle', function(done) {
     this.slow(150);
-    pool = lightningPool.createPool(new TestFactory(),
+    pool = createPool(new TestFactory(),
         {
           minIdle: 1,
           idleTimeoutMillis: 1,
@@ -166,7 +165,7 @@ describe('Releasing', function() {
   });
 
   it('should destroy on reset error', function() {
-    pool = lightningPool.createPool(new TestFactory({
+    pool = createPool(new TestFactory({
       reset: function() {
         throw new Error('Any reset error');
       }
@@ -182,7 +181,7 @@ describe('Releasing', function() {
   });
 
   it('should emit destroy-error', function(done) {
-    pool = lightningPool.createPool(new TestFactory({
+    pool = createPool(new TestFactory({
       destroy: function() {
         throw new Error('Any error');
       }

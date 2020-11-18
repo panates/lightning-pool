@@ -1,18 +1,13 @@
-/* eslint-disable */
-const assert = require('assert');
-const lightningPool = require('../');
-const TestFactory = require('./TestFactory');
-const {rejects, doesNotReject} = require('rejected-or-not');
-
-assert.rejects = assert.rejects || rejects;
-assert.doesNotReject = assert.doesNotReject || doesNotReject;
+import assert from 'assert';
+import {createPool} from '../src';
+import {TestFactory} from './support/TestFactory';
 
 describe('Start/Close', function() {
 
   let pool;
 
   beforeEach(() => {
-    pool = lightningPool.createPool(new TestFactory());
+    pool = createPool(new TestFactory());
   });
 
   afterEach(function() {
@@ -29,7 +24,8 @@ describe('Start/Close', function() {
   it('should not start a closed pool again', async function() {
     pool.start();
     await pool.close();
-    await assert.rejects(() => pool.acquire());
+    await assert.rejects(() =>
+        pool.acquire());
   });
 
   it('should return Promise if no callback given', function() {
