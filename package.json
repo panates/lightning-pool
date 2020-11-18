@@ -1,6 +1,6 @@
 {
   "name": "lightning-pool",
-  "description": "Fastest object pool implementation for JavaScript",
+  "description": "Fastest generic Pool written with TypeScript",
   "version": "3.0.0",
   "author": "Panates Ltd.",
   "contributors": [
@@ -10,7 +10,9 @@
   "repository": "panates/lightning-pool",
   "keywords": [
     "javascript",
-    "pool"
+    "typescript",
+    "pool",
+    "generic"
   ],
   "dependencies": {
     "doublylinked": "^2.4.3",
