@@ -7,9 +7,9 @@
 
 ## About
 
-High performance resource pool for NodeJS.
+High performance resource pool written with TypeScript.
 
- - Fastest Resource Pool implementation for NodeJS ever! Check out [benchmark](BANCHMARK.md) results
+ - The fastest Resource Pool implementation for JavaScript ever! Check out [benchmark](BANCHMARK.md) results
  - Advanced configuration options, suits for enterprise level applications
  - Configuration can be changed while pool running
  - Promise based factory supported
