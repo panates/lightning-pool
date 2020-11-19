@@ -153,7 +153,7 @@ export class Pool<T = any> extends EventEmitter {
         this._requestsProcessing = 0;
 
         if (terminateWait <= 0) {
-            this._acquiredResources.forEach(t => this.release(t.resource));
+            this._acquiredResources.forEach(t => this.destroy(t.resource, () => 0));
         } else {
             const startTime = Date.now();
             this._closeWaitTimer = setInterval(() => {
