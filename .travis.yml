@@ -3,8 +3,7 @@ node_js:
   - "10"
   - "11"
   - "12"
-  - "stable"
-sudo: false
+  - "13"
 cache:
   directories:
     - "$HOME/.npm"
