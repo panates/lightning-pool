@@ -11,7 +11,7 @@ describe('Start/Close', function() {
   });
 
   afterEach(function() {
-    return pool.close(0);
+    return pool.closeAsync(0);
   });
 
   it('should start on acquire', function(done) {
@@ -23,14 +23,14 @@ describe('Start/Close', function() {
 
   it('should not start a closed pool again', async function() {
     pool.start();
-    await pool.close();
+    await pool.closeAsync();
     await assert.rejects(() =>
         pool.acquire());
   });
 
   it('should return Promise if no callback given', function() {
     pool.start();
-    return pool.close().then();
+    return pool.closeAsync().then();
   });
 
   it('should close call callback', function(done) {
@@ -39,11 +39,12 @@ describe('Start/Close', function() {
   });
 
   it('should wait for given amount of ms before terminate ', async function() {
+    this.slow(1000);
     pool.start();
     const res = await pool.acquire();
     assert.ok(res);
     const t = Date.now();
-    await pool.close(500);
+    await pool.closeAsync(500);
     assert.ok(Date.now() - t >= 500);
   });
 
@@ -52,7 +53,7 @@ describe('Start/Close', function() {
     const res = await pool.acquire();
     assert.ok(res);
     const t = Date.now();
-    await pool.close(0);
+    await pool.closeAsync(0);
     assert.ok(Date.now() - t < 100);
   });
 

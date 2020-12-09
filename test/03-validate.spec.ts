@@ -6,14 +6,14 @@ describe('Validating', function() {
   let pool;
 
   afterEach(function() {
-    return pool.close(true);
+    return pool.closeAsync(true);
   });
 
   it('should validate on borrow', function() {
     pool = createPool(new TestFactory());
 
     return pool.acquire().then(obj => {
-      return pool.release(obj).then(() => {
+      return pool.releaseAsync(obj).then(() => {
         return pool.acquire().then(obj => {
           assert.strictEqual(obj.id, 1);
           assert.strictEqual(obj.validateCount, 1);
@@ -34,7 +34,7 @@ describe('Validating', function() {
     });
 
     return pool.acquire().then(obj => {
-      return pool.release(obj).then(() => {
+      return pool.releaseAsync(obj).then(() => {
         return pool.acquire().then(obj => {
           assert.strictEqual(pool.size, 1);
           return pool.release(obj);

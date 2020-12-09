@@ -6,7 +6,7 @@ describe('Releasing', function() {
   let pool;
 
   afterEach(function() {
-    return pool.close(true);
+    return pool.closeAsync(true);
   });
 
   it('should release with pool.release()', function(done) {
@@ -171,7 +171,7 @@ describe('Releasing', function() {
       }
     }));
     return pool.acquire().then(obj => {
-      return pool.release(obj).then(() => {
+      return pool.releaseAsync(obj).then(() => {
         assert.strictEqual(pool.size, 0);
         assert.strictEqual(pool.acquired, 0);
         assert.strictEqual(pool.pending, 0);

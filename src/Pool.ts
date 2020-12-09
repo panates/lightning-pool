@@ -118,9 +118,8 @@ export class Pool<T = any> extends EventEmitter {
     /**
      * Shuts down the pool and destroys all resources.
      */
-    close(): Promise<void>;
-    close(callback: Callback): void;
-    close(terminateWait: number, callback?: Callback): Promise<void>;
+    close(callback?: Callback): void;
+    close(terminateWait: number, callback?: Callback): void;
     close(force: boolean, callback?: Callback): void;
     close(arg0?, arg1?): any {
         let terminateWait: number = Infinity;
@@ -153,7 +152,7 @@ export class Pool<T = any> extends EventEmitter {
         this._requestsProcessing = 0;
 
         if (terminateWait <= 0) {
-            this._acquiredResources.forEach(t => this.destroy(t.resource, () => 0));
+            this._acquiredResources.forEach(t => this.destroy(t.resource));
         } else {
             const startTime = Date.now();
             this._closeWaitTimer = setInterval(() => {
@@ -172,6 +171,14 @@ export class Pool<T = any> extends EventEmitter {
         }
         this._setHouseKeep(5);
         this.once('close', callback);
+    }
+
+    closeAsync(): Promise<void>;
+    closeAsync(terminateWait: number): Promise<void>;
+    closeAsync(force: boolean): Promise<void>;
+    closeAsync(arg0?: any): Promise<void> {
+        return promisify.fromCallback<void>(
+            cb => this.close(arg0, cb));
     }
 
     /**
@@ -197,11 +204,7 @@ export class Pool<T = any> extends EventEmitter {
     /**
      * Releases an allocated `resource` and let it back to pool.
      */
-    release(resource: T): Promise<void>
-    release(resource: T, callback: Callback): void
     release(resource: T, callback?: Callback): any {
-        if (!callback)
-            return promisify.fromCallback<void>(cb => this.release(resource, cb));
         const item = this._allResources.get(resource);
         if (item && item.state !== ResourceState.IDLE)
             this._itemSetIdle(item, callback);
@@ -209,21 +212,31 @@ export class Pool<T = any> extends EventEmitter {
     }
 
     /**
+     * Async version of release().
+     */
+    releaseAsync(resource: T): Promise<void> {
+        return promisify.fromCallback<void>(cb => this.release(resource, cb));
+    }
+
+    /**
      * Releases, destroys and removes any `resource` from `Pool`.
      */
-    destroy(resource: T): Promise<void>;
-    destroy(resource: T, callback: Callback): void
     destroy(resource: T, callback?: Callback): any {
-        if (!callback)
-            return promisify.fromCallback<void>(cb => this.destroy(resource, cb));
         try {
             const item = this._allResources.get(resource);
             if (item)
                 this._itemDestroy(item, callback);
-            else callback();
+            else callback && callback();
         } finally {
             this._processNextRequest();
         }
+    }
+
+    /**
+     * Async version of destroy().
+     */
+    destroyAsync(resource: T): Promise<void> {
+        return promisify.fromCallback<void>(cb => this.destroy(resource, cb));
     }
 
     /**
@@ -467,7 +480,6 @@ export class Pool<T = any> extends EventEmitter {
         this._itemDetach(item);
 
         const handleCallback = (err?: Error) => {
-            this._allResources.delete(item.resource);
             if (err) {
                 this.emit('destroy-error', err, item.resource);
                 /* istanbul ignore next */
@@ -479,6 +491,8 @@ export class Pool<T = any> extends EventEmitter {
         };
 
         try {
+            this._allResources.delete(item.resource);
+            this._processNextRequest();
             const o = this._factory.destroy(item.resource);
             promisify.await(o, handleCallback);
         } catch (e) {

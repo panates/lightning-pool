@@ -6,7 +6,7 @@ describe('Acquiring', function () {
     let pool;
 
     afterEach(function () {
-        return pool.close(true);
+        return pool.closeAsync(true);
     });
 
     it('should acquire ( allback)', function (done) {
