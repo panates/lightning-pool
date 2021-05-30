@@ -122,7 +122,7 @@ export class Pool<T = any> extends EventEmitter {
     close(terminateWait: number, callback?: Callback): void;
     close(force: boolean, callback?: Callback): void;
     close(arg0?, arg1?): any {
-        let terminateWait: number = Infinity;
+        let terminateWait = Infinity;
         let callback: Callback;
 
         if (typeof arg0 === 'function')
@@ -226,7 +226,7 @@ export class Pool<T = any> extends EventEmitter {
             const item = this._allResources.get(resource);
             if (item)
                 this._itemDestroy(item, callback);
-            else callback && callback();
+            else if (callback) callback();
         } finally {
             this._processNextRequest();
         }
@@ -331,7 +331,7 @@ export class Pool<T = any> extends EventEmitter {
                 tries++;
                 this.emit('error', err, {
                     requestTime: request ? request.created : Date.now(),
-                    tries: tries,
+                    tries,
                     maxRetries: this.options.acquireMaxRetries
                 });
                 if (err instanceof AbortError || tries >= maxRetries) {
@@ -376,7 +376,7 @@ export class Pool<T = any> extends EventEmitter {
         this._houseKeepTimer = undefined;
         if (ms > 0 && this.state === PoolState.STARTED || this.state === PoolState.CLOSING)
             this._houseKeepTimer = setInterval(() => this._houseKeep(), ms);
-    };
+    }
 
     private _houseKeep() {
         const isClosing = this._state === PoolState.CLOSING;
@@ -460,7 +460,8 @@ export class Pool<T = any> extends EventEmitter {
             }
             if (isAcquired)
                 this.emit('return', item.resource);
-            callback && callback();
+            if (callback)
+                callback();
             // noinspection JSAccessibilityCheck
             this._processNextRequest();
         };
@@ -487,7 +488,8 @@ export class Pool<T = any> extends EventEmitter {
             }
             this.emit('destroy', item.resource);
             item.destroyed = true;
-            callback && callback();
+            if (callback)
+                callback();
         };
 
         try {
@@ -504,9 +506,10 @@ export class Pool<T = any> extends EventEmitter {
         item.state = ResourceState.VALIDATION;
         try {
             const o = this._factory.validate(item.resource);
+            // @ts-ignore
             promisify.await(o, callback);
         } catch (e) {
-            callback && callback(e);
+            if (callback) callback(e);
         }
     }
 

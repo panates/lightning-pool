@@ -30,7 +30,7 @@ function runTest(options, callback) {
       k++;
       t++;
       setTimeout(function() {
-        pool.release(obj).then(function() {
+        pool.releaseAsync(obj).then(function() {
           t--;
           if (k === testCount && t === 0) {
             k = 0;
