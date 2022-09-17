@@ -7,11 +7,11 @@ workflows:
   main:
     jobs:
       - test:
-          version: '16'
+          version: '16.17.0'
       - test:
-          version: '17'
+          version: '17.9.1'
       - test:
-          version: '18'
+          version: '18.9.0'
 
 jobs:
   test:
@@ -19,7 +19,7 @@ jobs:
       version:
         type: string
     docker:
-      - image: cimg/node:<< parameters.version >>
+      - image: circleci/node:<< parameters.version >>
     steps:
       - checkout
       - restore_cache:
