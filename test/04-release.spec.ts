@@ -1,15 +1,14 @@
-import assert from 'assert';
-import {createPool} from '../src';
-import {TestFactory} from './support/TestFactory';
+import { createPool } from '../src/index.js';
+import { TestFactory } from './support/TestFactory.js';
 
-describe('Releasing', function() {
+describe('Releasing', function () {
   let pool;
 
-  afterEach(function() {
+  afterEach(function () {
     return pool.closeAsync(true);
   });
 
-  it('should release with pool.release()', function(done) {
+  it('should release with pool.release()', function (done) {
     pool = createPool(new TestFactory(),
         {
           max: 3
@@ -17,109 +16,109 @@ describe('Releasing', function() {
     let o;
     const acquire = () => {
       pool.acquire((err, obj) => {
-        assert(!err, err);
+        expect(err).not.toBeDefined();
         o = o || obj;
       });
     };
     acquire();
     acquire();
     setTimeout(() => {
-      assert.strictEqual(pool.size, 2);
-      assert.strictEqual(pool.acquired, 2);
-      assert.strictEqual(pool.pending, 0);
-      assert.strictEqual(pool.available, 0);
+      expect(pool.size).toStrictEqual(2);
+      expect(pool.acquired).toStrictEqual(2);
+      expect(pool.pending).toStrictEqual(0);
+      expect(pool.available).toStrictEqual(0);
       pool.once('return', (obj) => {
-        assert.strictEqual(obj, o);
-        assert.strictEqual(pool.size, 2);
-        assert.strictEqual(pool.acquired, 1);
-        assert.strictEqual(pool.pending, 0);
-        assert.strictEqual(pool.available, 1);
+        expect(obj).toEqual(o);
+        expect(pool.size).toStrictEqual(2);
+        expect(pool.acquired).toStrictEqual(1);
+        expect(pool.pending).toStrictEqual(0);
+        expect(pool.available).toStrictEqual(1);
         done();
       });
       pool.release(o);
     }, 10);
   });
 
-  it('should destroy with pool.destroy()', function(done) {
+  it('should destroy with pool.destroy()', function (done) {
     pool = createPool(new TestFactory(),
         {
           max: 3
         });
-    var o;
-    const acquire = function() {
-      pool.acquire(function(err, obj) {
-        assert(!err, err);
+    let o;
+    const acquire = function () {
+      pool.acquire(function (err, obj) {
+        expect(err).not.toBeDefined();
         o = o || obj;
       });
     };
     acquire();
     acquire();
-    setTimeout(function() {
-      assert.strictEqual(pool.size, 2);
-      assert.strictEqual(pool.acquired, 2);
-      assert.strictEqual(pool.pending, 0);
-      assert.strictEqual(pool.available, 0);
-      pool.once('destroy', function(obj) {
-        assert.strictEqual(obj, o);
-        assert.strictEqual(pool.size, 1);
-        assert.strictEqual(pool.acquired, 1);
-        assert.strictEqual(pool.pending, 0);
-        assert.strictEqual(pool.available, 0);
+    setTimeout(function () {
+      expect(pool.size).toStrictEqual(2);
+      expect(pool.acquired).toStrictEqual(2);
+      expect(pool.pending).toStrictEqual(0);
+      expect(pool.available).toStrictEqual(0);
+      pool.once('destroy', function (obj) {
+        expect(obj).toEqual(o);
+        expect(pool.size).toStrictEqual(1);
+        expect(pool.acquired).toStrictEqual(1);
+        expect(pool.pending).toStrictEqual(0);
+        expect(pool.available).toStrictEqual(0);
         done();
       });
       pool.destroy(o);
     }, 10);
   });
 
-  it('should not release if resource is not in pool', function(done) {
+  it('should not release if resource is not in pool', function (done) {
     pool = createPool(new TestFactory());
-    pool.acquire(function(err, obj) {
-      assert(!err, err);
-      assert(obj);
+    pool.acquire(function (err, obj) {
+      expect(err).not.toBeDefined();
+      expect(obj).toBeDefined();
       pool.release(1);
     });
-    setTimeout(function() {
-      assert.strictEqual(pool.size, 1);
+    setTimeout(function () {
+      expect(pool.size).toStrictEqual(1);
       done();
     }, 10);
   });
 
-  it('should not destroy if resource is not in pool', function(done) {
+  it('should not destroy if resource is not in pool', function (done) {
     pool = createPool(new TestFactory());
-    pool.acquire(function(err, obj) {
-      assert(!err, err);
-      assert(obj);
+    pool.acquire(function (err, obj) {
+      expect(err).not.toBeDefined();
+      expect(obj).toBeDefined();
       pool.destroy(1);
     });
-    setTimeout(function() {
-      assert.strictEqual(pool.size, 1);
+    setTimeout(function () {
+      expect(pool.size).toStrictEqual(1);
       done();
     }, 10);
   });
 
-  it('should not release if already idle', function(done) {
+  it('should not release if already idle', function (done) {
     pool = createPool(new TestFactory());
-    pool.acquire(function(err, obj) {
-      assert(!err, err);
+    pool.acquire(function (err, obj) {
+      expect(err).not.toBeDefined();
       pool.release(obj);
-      setTimeout(function() {
+      setTimeout(function () {
         pool.release(obj);
         done();
       }, 10);
     });
   });
 
-  it('should release but keep min', function(done) {
+  it('should release but keep min', function (done) {
     pool = createPool(new TestFactory(),
         {
           min: 1,
           idleTimeoutMillis: 1,
           houseKeepInterval: 5
         });
-    const acquire = function() {
-      pool.acquire(function(err, obj) {
-        assert(!err, err);
-        setTimeout(function() {
+    const acquire = function () {
+      pool.acquire(function (err, obj) {
+        expect(err).not.toBeDefined();
+        setTimeout(function () {
           pool.release(obj);
         }, 5);
       });
@@ -127,27 +126,26 @@ describe('Releasing', function() {
     acquire();
     acquire();
     acquire();
-    setTimeout(function() {
-      assert.strictEqual(pool.size, 1);
-      assert.strictEqual(pool.acquired, 0);
-      assert.strictEqual(pool.pending, 0);
-      assert.strictEqual(pool.available, 1);
+    setTimeout(function () {
+      expect(pool.size).toStrictEqual(1);
+      expect(pool.acquired).toStrictEqual(0);
+      expect(pool.pending).toStrictEqual(0);
+      expect(pool.available).toStrictEqual(1);
       done();
     }, 20);
   });
 
-  it('should release but keep minIdle', function(done) {
-    this.slow(150);
+  it('should release but keep minIdle', function (done) {
     pool = createPool(new TestFactory(),
         {
           minIdle: 1,
           idleTimeoutMillis: 1,
           houseKeepInterval: 5
         });
-    const acquire = function() {
-      pool.acquire(function(err, obj) {
-        assert(!err, err);
-        setTimeout(function() {
+    const acquire = function () {
+      pool.acquire(function (err, obj) {
+        expect(err).not.toBeDefined();
+        setTimeout(function () {
           pool.release(obj);
         }, 5);
       });
@@ -155,47 +153,47 @@ describe('Releasing', function() {
     acquire();
     acquire();
     acquire();
-    setTimeout(function() {
-      assert.strictEqual(pool.size, 1);
-      assert.strictEqual(pool.acquired, 0);
-      assert.strictEqual(pool.pending, 0);
-      assert.strictEqual(pool.available, 1);
+    setTimeout(function () {
+      expect(pool.size).toStrictEqual(1);
+      expect(pool.acquired).toStrictEqual(0);
+      expect(pool.pending).toStrictEqual(0);
+      expect(pool.available).toStrictEqual(1);
       done();
     }, 40);
   });
 
-  it('should destroy on reset error', function() {
+  it('should destroy on reset error', function () {
     pool = createPool(new TestFactory({
-      reset: function() {
+      reset() {
         throw new Error('Any reset error');
       }
     }));
     return pool.acquire().then(obj => {
       return pool.releaseAsync(obj).then(() => {
-        assert.strictEqual(pool.size, 0);
-        assert.strictEqual(pool.acquired, 0);
-        assert.strictEqual(pool.pending, 0);
-        assert.strictEqual(pool.available, 0);
+        expect(pool.size).toStrictEqual(0);
+        expect(pool.acquired).toStrictEqual(0);
+        expect(pool.pending).toStrictEqual(0);
+        expect(pool.available).toStrictEqual(0);
       });
     });
   });
 
-  it('should emit destroy-error', function(done) {
+  it('should emit destroy-error', function (done) {
     pool = createPool(new TestFactory({
-      destroy: function() {
+      destroy() {
         throw new Error('Any error');
       }
     }), {
       idleTimeoutMillis: 1,
       houseKeepInterval: 5
     });
-    pool.on('destroy-error', function() {
-      assert.strictEqual(pool.size, 0);
+    pool.on('destroy-error', function () {
+      expect(pool.size).toStrictEqual(0);
       done();
     });
 
-    pool.acquire(function(err, obj) {
-      assert(!err, err);
+    pool.acquire(function (err, obj) {
+      expect(err).not.toBeDefined();
       pool.release(obj);
     });
   });

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const lightningPoolTest = require('./lightning-pool');
 const genericPoolTest = require('./generic-pool');
 const promisify = require('putil-promisify');
@@ -32,7 +33,7 @@ async function runTest(options) {
   };
 
   const printResults = function() {
-    let t = Math.round(((results[1] / results[0]) - 1) * 100);
+    const t = Math.round(((results[1] / results[0]) - 1) * 100);
     if (t > 0)
       console.log('Result: lightning is %', t, 'faster than generic');
     else console.log('Result: generic is %', t, 'faster than lightning');

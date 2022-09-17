@@ -2,7 +2,7 @@
 
 [![NPM Version][npm-image]][npm-url]
 [![NPM Downloads][downloads-image]][downloads-url]
-[![Build Status][travis-image]][travis-url]
+[![CircleCI][circleci-image]][circleci-url]
 [![Test Coverage][coveralls-image]][coveralls-url]
 
 ## About
@@ -362,15 +362,15 @@ Pool.PoolState (Number):
 
 ## Node Compatibility
 
-  - node `>= 10.0`;
+  - node `>= 16.0`;
   
 ### License
 [MIT](LICENSE)
 
 [npm-image]: https://img.shields.io/npm/v/lightning-pool.svg
 [npm-url]: https://npmjs.org/package/lightning-pool
-[travis-image]: https://img.shields.io/travis/panates/lightning-pool/master.svg
-[travis-url]: https://travis-ci.com/panates/lightning-pool
+[circleci-image]: https://circleci.com/gh/panates/lightning-pool/tree/master.svg?style=shield
+[circleci-url]: https://circleci.com/gh/panates/lightning-pool/tree/master
 [coveralls-image]: https://img.shields.io/coveralls/panates/lightning-pool/master.svg
 [coveralls-url]: https://coveralls.io/r/panates/lightning-pool
 [downloads-image]: https://img.shields.io/npm/dm/lightning-pool.svg

@@ -1,9 +1,9 @@
 # compiled output
 /node_modules
-dist
+/esm
+/cjs
 node_modules
 coverage
-dev.js
 
 # environment variables
 .env

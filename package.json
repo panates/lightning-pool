@@ -9,10 +9,9 @@
   "license": "MIT",
   "repository": "panates/lightning-pool",
   "keywords": [
-    "javascript",
-    "typescript",
     "pool",
-    "generic"
+    "generic",
+    "generic-pool"
   ],
   "dependencies": {
     "doublylinked": "^2.5.1",
@@ -20,48 +19,56 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
-    "@types/mocha": "^9.1.1",
+    "@types/jest": "^29.0.2",
     "@types/node": "^18.7.18",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
     "dotenv": "^16.0.2",
     "eslint": "^8.23.1",
     "eslint-config-google": "^0.14.0",
-    "mocha": "^10.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-security": "^1.5.0",
+    "eslint-plugin-simple-import-sort": "^8.0.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "jest": "^29.0.3",
     "npm-run-path": "^5.1.0",
-    "nyc": "^15.1.0",
     "ts-cleanup": "^0.2.5",
+    "ts-jest": "^29.0.1",
     "ts-loader": "^9.3.1",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.0",
     "typescript": "^4.8.3"
   },
-  "engines": {
-    "node": ">= 10.0"
-  },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "directories": {
-    "lib": "dist",
-    "test": "test"
+  "type": "module",
+  "main": "cjs/index.js",
+  "module": "esm/index.js",
+  "types": "esm/index.d.ts",
+  "exports": {
+    ".": "./cjs/index.js",
+    "./cjs": "./cjs/index.js",
+    "./esm": "./esm/index.js"
   },
   "files": [
+    "bin/",
+    "cjs/",
+    "esm/",
     "LICENSE",
-    "README",
-    "dist/"
+    "README.md"
   ],
-  "nyc": {
-    "temp-dir": "./coverage/.nyc_output"
-  },
   "scripts": {
-    "test": "TS_NODE_PROJECT='./test/tsconfig.json' mocha -r ts-node/register --reporter spec test/**/*.spec.ts",
-    "cover": "nyc --reporter=cobertura --reporter html --reporter text npm run test",
+    "lint": "eslint .",
     "clean": "npm run clean:src && npm run clean:dist",
-    "clean:dist": "ts-cleanup -d dist --remove-dirs --all",
+    "clean:dist": "rimraf cjs esm coverage",
     "clean:src": "ts-cleanup -s src --all | ts-cleanup -s test",
-    "build": "tsc -b tsconfig-build.json",
-    "compile": "tsc -b tsconfig.json",
-    "lint": "eslint src/** --no-error-on-unmatched-pattern",
-    "travis-cover": "nyc --reporter lcovonly npm run test"
+    "prebuild": "npm run clean:dist && npm run lint",
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc -b tsconfig-build-cjs.json",
+    "build:esm": "tsc -b tsconfig-build-esm.json",
+    "postbuild": "cp package.cjs.json ./cjs/package.json",
+    "test": "jest --runInBand --detectOpenHandles",
+    "precover": "rimraf coverage",
+    "cover": "jest --maxWorkers=1 --coverage",
+    "precitest": "rimraf coverage",
+    "citest": "jest --coverage --coverageReporters=lcov"
   }
 }

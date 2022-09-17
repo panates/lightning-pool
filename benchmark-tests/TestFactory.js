@@ -1,5 +1,3 @@
-const promisify = require('putil-promisify');
-
 /**
  * Generic class for handling creation of resources
  * for testing
@@ -27,7 +25,7 @@ class TestFactory {
     this.resetWait = opts && opts.resetWait || 0;
   }
 
-  create(props) {
+  create() {
     return new Promise((resolve, reject) => {
       const id = ++this.created;
       if (this.max && id >= this.max)
@@ -35,7 +33,7 @@ class TestFactory {
 
       const doCreate = () => {
         if (this.retryTest && this.retryTest--)
-          return reject('Retry test error');
+          return reject(new Error('Retry test error'));
         const res = new TestResource(id);
         resolve(res);
       };
@@ -45,7 +43,7 @@ class TestFactory {
       else doCreate();
 
     });
-  };
+  }
 
   destroy(res) {
     return new Promise((resolve, reject) => {
@@ -57,31 +55,26 @@ class TestFactory {
       res.destroyed = true;
       resolve();
     });
-  };
+  }
 
   reset(res) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       setTimeout(() => {
         res.resetCount++;
         resolve();
       }, this.resetWait);
     });
-  };
+  }
 
-  validate(resource, callback) {
-    return new Promise((resolve, reject) => {
+  validate(resource) {
+    return new Promise((resolve) => {
       resource.validateCount++;
       resolve();
     });
-  };
+  }
 
 }
 
-/**
- *
- * @param id
- * @constructor
- */
 function TestResource(id) {
   this.id = id;
   this.resetCount = 0;

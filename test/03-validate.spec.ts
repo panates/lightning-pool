@@ -1,30 +1,29 @@
-import assert from 'assert';
-import {createPool} from '../src';
-import {TestFactory} from './support/TestFactory';
+import { createPool } from '../src/index.js';
+import { TestFactory } from './support/TestFactory.js';
 
-describe('Validating', function() {
+describe('Validating', function () {
   let pool;
 
-  afterEach(function() {
+  afterEach(function () {
     return pool.closeAsync(true);
   });
 
-  it('should validate on borrow', function() {
+  it('should validate on borrow', function () {
     pool = createPool(new TestFactory());
 
     return pool.acquire().then(obj => {
       return pool.releaseAsync(obj).then(() => {
-        return pool.acquire().then(obj => {
-          assert.strictEqual(obj.id, 1);
-          assert.strictEqual(obj.validateCount, 1);
-          return pool.release(obj);
+        return pool.acquire().then(obj2 => {
+          expect(obj2.id).toStrictEqual(1);
+          expect(obj2.validateCount).toStrictEqual(1);
+          return pool.release(obj2);
         });
       });
 
     });
   });
 
-  it('should validate on borrow and remove if error', function() {
+  it('should validate on borrow and remove if error', function () {
     pool = createPool(new TestFactory({
       validate: () => {
         throw new Error('Validate error');
@@ -35,31 +34,31 @@ describe('Validating', function() {
 
     return pool.acquire().then(obj => {
       return pool.releaseAsync(obj).then(() => {
-        return pool.acquire().then(obj => {
-          assert.strictEqual(pool.size, 1);
-          return pool.release(obj);
+        return pool.acquire().then(obj2 => {
+          expect(pool.size).toStrictEqual(1);
+          return pool.release(obj2);
         });
       });
     });
   });
 
-  it('should not validate if options.validation is false', function(done) {
-    var k = 0;
+  it('should not validate if options.validation is false', function (done) {
+    let k = 0;
     pool = createPool(new TestFactory(), {
       validation: false
     });
     const acquire = () => {
       pool.acquire((err, obj) => {
-        assert(!err, err);
+        expect(err).not.toBeDefined();
         pool.release(obj);
       });
     };
     pool.on('return', () => {
       if (++k === 2) {
         pool.acquire((err, obj) => {
-          assert(!err, err);
-          assert.strictEqual(obj.id, 1);
-          assert.strictEqual(obj.validateCount, 0);
+          expect(err).not.toBeDefined();
+          expect(obj.id).toStrictEqual(1);
+          expect(obj.validateCount).toStrictEqual(0);
           done();
         });
       }
