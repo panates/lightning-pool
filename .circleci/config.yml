@@ -9,8 +9,6 @@ workflows:
       - test:
           version: '16.17.0'
       - test:
-          version: '17.9'
-      - test:
           version: '18.9.0'
 
 jobs:
