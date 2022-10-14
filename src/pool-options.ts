@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { PoolConfiguration } from './definitions.js';
-import { Pool } from './Pool.js';
+import { Pool } from './pool.js';
 
 const defaultValues = {
   acquireMaxRetries: 0,

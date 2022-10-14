@@ -1,7 +1,7 @@
 import DoublyLinked from 'doublylinked';
 import { EventEmitter } from 'events';
 import promisify from 'putil-promisify';
-import { AbortError } from './AbortError.js';
+import { AbortError } from './abort-error.js';
 import {
   Callback,
   PoolConfiguration,
@@ -9,9 +9,9 @@ import {
   PoolState,
   ResourceState
 } from './definitions.js';
-import { PoolOptions } from './PoolOptions.js';
-import { PoolRequest } from './PoolRequest.js';
-import { ResourceItem } from './ResourceItem.js';
+import { PoolOptions } from './pool-options.js';
+import { PoolRequest } from './pool-request.js';
+import { ResourceItem } from './resource-item.js';
 
 export class Pool<T = any> extends EventEmitter {
 
@@ -210,7 +210,7 @@ export class Pool<T = any> extends EventEmitter {
   /**
    * Releases an allocated `resource` and let it back to pool.
    */
-  release(resource: T, callback?: Callback): any {
+  release(resource: T, callback?: Callback): void {
     const item = this._allResources.get(resource);
     if (item && item.state !== ResourceState.IDLE)
       this._itemSetIdle(item, callback);
