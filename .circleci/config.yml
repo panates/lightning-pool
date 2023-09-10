@@ -2,14 +2,15 @@
 version: 2.1
 orbs:
   coveralls: coveralls/coveralls@1.0.6
+  node: circleci/node@5.1.0
 
 workflows:
   main:
     jobs:
       - test:
-          version: '18.17.0'
+          version: '18.17'
       - test:
-          version: '20.5.0'
+          version: '20.5'
 
 jobs:
   test:
@@ -17,20 +18,15 @@ jobs:
       version:
         type: string
     docker:
-      - image: circleci/node:<< parameters.version >>
+      - image: cimg/base:stable
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v1-deps-{{ checksum "package-lock.json" }}
-      - save_cache:
-          key: v1-deps-{{ checksum "package-lock.json" }}
-          paths:
-            - node_modules
-      - run: sudo npm install npm -g
-      - run: npm install
-      - run: npm run lint
-      - run: npm run citest
+      - node/install:
+          node-version: << parameters.version >>
       - run: npm install coveralls --no-save
+      - node/run:
+          npm-run: lint
+      - node/run:
+          npm-run: citest
       - coveralls/upload:
           path_to_lcov: ./coverage/lcov.info
