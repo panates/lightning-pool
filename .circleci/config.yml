@@ -7,6 +7,8 @@ workflows:
   main:
     jobs:
       - test:
+          version: '16.20'
+      - test:
           version: '18.17'
       - test:
           version: '20.5'
