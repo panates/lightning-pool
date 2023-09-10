@@ -1,7 +1,7 @@
+# This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
 version: 2.1
 orbs:
   coveralls: coveralls/coveralls@1.0.6
-  node: circleci/node@5.1.0
 
 workflows:
   main:
@@ -17,15 +17,20 @@ jobs:
       version:
         type: string
     docker:
-      - image: cimg/base:stable
+      - image: cimg/node:<< parameters.version >>
     steps:
       - checkout
-      - node/install:
-          node-version: << parameters.version >>
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
+      - save_cache:
+          key: v1-deps-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+      - run: sudo npm install -g npm@^9
+      - run: npm install
+      - run: npm run lint
+      - run: npm run citest
       - run: npm install coveralls --no-save
-      - node/run:
-          npm-run: lint
-      - node/run:
-          npm-run: citest
       - coveralls/upload:
           path_to_lcov: ./coverage/lcov.info
