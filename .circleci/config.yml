@@ -19,7 +19,7 @@ jobs:
       version:
         type: string
     docker:
-      - image: cimg/node:<< parameters.version >>
+      - image: circleci/node:<< parameters.version >>
     steps:
       - checkout
       - restore_cache:
