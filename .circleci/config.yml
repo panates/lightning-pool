@@ -8,10 +8,22 @@ workflows:
     jobs:
       - test:
           version: '16.20'
+          filters:
+            branches:
+              only:
+                - main
       - test:
           version: '18.17'
+          filters:
+            branches:
+              only:
+                - main
       - test:
           version: '20.5'
+          filters:
+            branches:
+              only:
+                - main
 
 jobs:
   test:
