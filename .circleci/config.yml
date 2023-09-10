@@ -25,6 +25,8 @@ jobs:
         only:
           - main
           - dev
+    environment:
+      NODE_ENV: test
     steps:
       - checkout
       - restore_cache:
