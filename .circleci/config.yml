@@ -1,4 +1,3 @@
-# This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
 version: 2.1
 orbs:
   coveralls: coveralls/coveralls@1.0.6
