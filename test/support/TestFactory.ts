@@ -6,7 +6,10 @@ export class TestResource {
   destroyed = false;
 
   // noinspection JSUnusedGlobalSymbols
-  constructor(public id) {}
+  constructor(
+    public id: any,
+    public options?: any,
+  ) {}
 }
 
 export class TestFactory implements PoolFactory<TestResource> {
@@ -29,7 +32,7 @@ export class TestFactory implements PoolFactory<TestResource> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  create(props): Promise<TestResource> {
+  create(props, options?: any): Promise<TestResource> {
     return new Promise((resolve, reject) => {
       const id = ++this.created;
       if (this.max && id >= this.max) throw new Error('Max resources created');
@@ -38,7 +41,7 @@ export class TestFactory implements PoolFactory<TestResource> {
         if (this.retryTest && this.retryTest--) {
           return reject(new Error('Retry test error'));
         }
-        const res = new TestResource(id);
+        const res = new TestResource(id, options);
         resolve(res);
       };
 

@@ -6,12 +6,28 @@ describe('Acquiring', () => {
 
   afterEach(() => pool.closeAsync(true));
 
-  it('should acquire ( allback)', done => {
+  it('should acquire (callback)', done => {
     pool = createPool(new TestFactory());
-    pool.acquire((err, obj) => {
+    pool.acquire((err: unknown, obj: any) => {
       try {
         expect(err).not.toBeDefined();
         expect(obj.id).toStrictEqual(1);
+        expect(pool.acquired).toStrictEqual(1);
+        expect(pool.state).toStrictEqual(1);
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  });
+
+  it('should acquire (callback)', done => {
+    pool = createPool(new TestFactory());
+    pool.acquire({ x: 1 }, (err: unknown, obj: any) => {
+      try {
+        expect(err).not.toBeDefined();
+        expect(obj.id).toStrictEqual(1);
+        expect(obj.options).toStrictEqual({ x: 1 });
         expect(pool.acquired).toStrictEqual(1);
         expect(pool.state).toStrictEqual(1);
         done();

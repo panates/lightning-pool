@@ -121,7 +121,13 @@ Acquires a `resource` from the `Pool` or create a new one.
 
 ##### Usage
 
-`pool.acquire()`
+`pool.acquire(): Promise<any>`
+
+`pool.acquire(factoryCreateOptions: any): Promise<any>`
+
+`pool.acquire(callback:Callback): Promise<any>`
+
+`pool.acquire(factoryCreateOptions?: any, callback:Callback): Promise<any>`
 
 - *Returns*: A Promise
 

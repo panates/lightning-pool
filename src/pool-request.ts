@@ -7,12 +7,14 @@ function noop() {}
 export class PoolRequest {
   created: number;
   callback: Callback;
+  options?: any;
   timeoutHandle: any;
   timedOut = false;
 
-  constructor(pool: Pool, callback?: Callback) {
+  constructor(pool: Pool, callback?: Callback, options?: any) {
     this.created = Date.now();
     this.callback = callback || noop;
+    this.options = options;
     if (pool.options.acquireTimeoutMillis) {
       this.timeoutHandle = setTimeout(() => {
         this.timedOut = true;
