@@ -7,19 +7,19 @@ import {
   PoolConfiguration,
   PoolFactory,
   PoolState,
-  ResourceState
+  ResourceState,
 } from './definitions.js';
 import { PoolOptions } from './pool-options.js';
 import { PoolRequest } from './pool-request.js';
 import { ResourceItem } from './resource-item.js';
 
 export class Pool<T = any> extends EventEmitter {
-
   private readonly _options: PoolOptions;
   private readonly _factory: PoolFactory<T>;
   private _requestQueue: DoublyLinked<PoolRequest> = new DoublyLinked();
   private _allResources: Map<T, ResourceItem<T>> = new Map();
-  private _acquiredResources: DoublyLinked<ResourceItem<T>> = new DoublyLinked();
+  private _acquiredResources: DoublyLinked<ResourceItem<T>> =
+    new DoublyLinked();
   private _idleResources: DoublyLinked<ResourceItem<T>> = new DoublyLinked();
   private _creating = 0;
   private _requestsProcessing = 0;
@@ -29,30 +29,32 @@ export class Pool<T = any> extends EventEmitter {
 
   constructor(factory: PoolFactory<T>, config?: PoolConfiguration) {
     super();
-    if (typeof factory !== 'object')
+    if (typeof factory !== 'object') {
       throw new TypeError('You must provide `factory` object');
+    }
 
-    if (typeof factory.create !== 'function')
+    if (typeof factory.create !== 'function') {
       throw new TypeError('factory.create must be a function');
+    }
 
-    if (typeof factory.destroy !== 'function')
+    if (typeof factory.destroy !== 'function') {
       throw new TypeError('factory.destroy must be a function');
+    }
 
-    if (factory.validate && typeof factory.validate !== 'function')
+    if (factory.validate && typeof factory.validate !== 'function') {
       throw new TypeError('factory.validate can be a function');
+    }
 
-    if (factory.reset && typeof factory.reset !== 'function')
+    if (factory.reset && typeof factory.reset !== 'function') {
       throw new TypeError('factory.reset can be a function');
+    }
 
-    const opts = this._options = new PoolOptions(this);
+    const opts = (this._options = new PoolOptions(this));
     opts.on('change', (prop: string, val) => {
-      if (prop === 'houseKeepInterval')
-        this._setHouseKeep(val as number);
-      if (prop === 'min' || prop === 'minIdle')
-        this._ensureMin();
+      if (prop === 'houseKeepInterval') this._setHouseKeep(val as number);
+      if (prop === 'min' || prop === 'minIdle') this._ensureMin();
     });
-    if (config)
-      this.options.assign(config);
+    if (config) this.options.assign(config);
     this._factory = factory;
   }
 
@@ -111,10 +113,10 @@ export class Pool<T = any> extends EventEmitter {
    * Note: This method is not need to be called. Pool instance will automatically be started when acquire() method is called
    */
   start(): void {
-    if (this._state === PoolState.STARTED)
-      return;
-    if (this._state >= PoolState.CLOSING)
+    if (this._state === PoolState.STARTED) return;
+    if (this._state >= PoolState.CLOSING) {
       throw new Error('Closed pool can not be started again');
+    }
     this._state = PoolState.STARTED;
     this._setHouseKeep(this.options.houseKeepInterval);
     this._ensureMin();
@@ -131,18 +133,18 @@ export class Pool<T = any> extends EventEmitter {
     let terminateWait = Infinity;
     let callback: Callback;
 
-    if (typeof arg0 === 'function')
-      callback = arg0;
+    if (typeof arg0 === 'function') callback = arg0;
     else {
-      terminateWait = typeof arg0 === 'number' ? arg0 :
-          (!!arg0 ? 0 : Infinity);
+      terminateWait = typeof arg0 === 'number' ? arg0 : arg0 ? 0 : Infinity;
       callback = arg1;
     }
-    if (!callback)
+    if (!callback) {
       return promisify.fromCallback(cb => this.close(terminateWait, cb));
+    }
 
-    if (this._state === PoolState.CLOSED || this._state === PoolState.IDLE)
+    if (this._state === PoolState.CLOSED || this._state === PoolState.IDLE) {
       return callback();
+    }
 
     if (this._state === PoolState.CLOSING) {
       this.once('close', callback);
@@ -150,8 +152,7 @@ export class Pool<T = any> extends EventEmitter {
     }
 
     this.emit('closing');
-    if (this._houseKeepTimer)
-      clearTimeout(this._houseKeepTimer);
+    if (this._houseKeepTimer) clearTimeout(this._houseKeepTimer);
     this._state = PoolState.CLOSING;
     this._requestQueue.forEach(t => t.stopTimout());
     this._requestQueue = new DoublyLinked();
@@ -183,8 +184,7 @@ export class Pool<T = any> extends EventEmitter {
   closeAsync(terminateWait: number): Promise<void>;
   closeAsync(force: boolean): Promise<void>;
   closeAsync(arg0?: any): Promise<void> {
-    return promisify.fromCallback<void>(
-        cb => this.close(arg0, cb));
+    return promisify.fromCallback<void>(cb => this.close(arg0, cb));
   }
 
   /**
@@ -193,16 +193,16 @@ export class Pool<T = any> extends EventEmitter {
   acquire(): Promise<T>;
   acquire(callback): void;
   acquire(arg0?): any {
-    if (!arg0)
-      return promisify.fromCallback<T>(cb => this.acquire(cb));
+    if (!arg0) return promisify.fromCallback<T>(cb => this.acquire(cb));
     const callback = arg0;
     try {
       this.start();
     } catch (e) {
       return callback(e);
     }
-    if (this.options.maxQueue && this.pending >= this.options.maxQueue)
+    if (this.options.maxQueue && this.pending >= this.options.maxQueue) {
       return callback(new Error('Pool queue is full'));
+    }
     this._requestQueue.push(new PoolRequest(this, callback));
     this._processNextRequest();
   }
@@ -212,8 +212,9 @@ export class Pool<T = any> extends EventEmitter {
    */
   release(resource: T, callback?: Callback): void {
     const item = this._allResources.get(resource);
-    if (item && item.state !== ResourceState.IDLE)
+    if (item && item.state !== ResourceState.IDLE) {
       this._itemSetIdle(item, callback);
+    }
     this._processNextRequest();
   }
 
@@ -230,8 +231,7 @@ export class Pool<T = any> extends EventEmitter {
   destroy(resource: T, callback?: Callback): any {
     try {
       const item = this._allResources.get(resource);
-      if (item)
-        this._itemDestroy(item, callback);
+      if (item) this._itemDestroy(item, callback);
       else if (callback) callback();
     } finally {
       this._processNextRequest();
@@ -261,12 +261,14 @@ export class Pool<T = any> extends EventEmitter {
   }
 
   private _processNextRequest(): void {
-    if (this._state !== PoolState.STARTED ||
-        this._requestsProcessing >= this.options.max - this.acquired)
+    if (
+      this._state !== PoolState.STARTED ||
+      this._requestsProcessing >= this.options.max - this.acquired
+    ) {
       return;
+    }
     const request = this._requestQueue.shift();
-    if (!request)
-      return;
+    if (!request) return;
 
     this._requestsProcessing++;
     const handleCallback = (err?: Error, item?: ResourceItem<T>) => {
@@ -312,7 +314,6 @@ export class Pool<T = any> extends EventEmitter {
     this._createResource(request, handleCallback);
   }
 
-
   emit(event: string | symbol, ...args: any[]): boolean {
     // Prevents errors while calling emit()
     try {
@@ -331,14 +332,13 @@ export class Pool<T = any> extends EventEmitter {
     this._creating++;
 
     const handleCallback = (err?: Error, obj?: T) => {
-      if (request && request.timedOut)
-        return;
+      if (request && request.timedOut) return;
       if (err || !obj) {
         tries++;
         this.emit('error', err, {
           requestTime: request ? request.created : Date.now(),
           tries,
-          maxRetries: this.options.acquireMaxRetries
+          maxRetries: this.options.acquireMaxRetries,
         });
         if (err instanceof AbortError || tries >= maxRetries) {
           this._creating--;
@@ -348,40 +348,45 @@ export class Pool<T = any> extends EventEmitter {
       }
 
       this._creating--;
-      if (this._allResources.has(obj))
-        return callback &&
-            callback(new Error('Factory error. Resource already in pool'));
+      if (this._allResources.has(obj)) {
+        return (
+          callback &&
+          callback(new Error('Factory error. Resource already in pool'))
+        );
+      }
 
       const item = new ResourceItem(obj);
       this._itemSetIdle(item);
       this._allResources.set(obj, item);
-      if (callback)
-        callback(undefined, item);
+      if (callback) callback(undefined, item);
       this.emit('create', obj);
     };
 
     const tryCreate = () => {
       try {
-        const o = this._factory.create({tries, maxRetries});
+        const o = this._factory.create({ tries, maxRetries });
         /* istanbul ignore next */
-        if (!o)
+        if (!o) {
           return handleCallback(new AbortError('Factory returned no resource'));
+        }
         promisify.await(o, handleCallback);
       } catch (e: any) {
         handleCallback(e);
       }
     };
 
-
     tryCreate();
   }
 
   private _setHouseKeep(ms: number) {
-    if (this._houseKeepTimer)
-      clearInterval(this._houseKeepTimer);
+    if (this._houseKeepTimer) clearInterval(this._houseKeepTimer);
     this._houseKeepTimer = undefined;
-    if (ms > 0 && this.state === PoolState.STARTED || this.state === PoolState.CLOSING)
+    if (
+      (ms > 0 && this.state === PoolState.STARTED) ||
+      this.state === PoolState.CLOSING
+    ) {
       this._houseKeepTimer = setInterval(() => this._houseKeep(), ms);
+    }
   }
 
   private _houseKeep() {
@@ -391,18 +396,16 @@ export class Pool<T = any> extends EventEmitter {
     let n = this._idleResources.length - this.options.minIdle;
     if (isClosing || (m > 0 && n > 0)) {
       this._idleResources.every((item: ResourceItem<T>): boolean => {
-        if (isClosing ||
-            item.idleTime + this.options.idleTimeoutMillis < now) {
+        if (isClosing || item.idleTime + this.options.idleTimeoutMillis < now) {
           this._itemDestroy(item);
-          return isClosing || !!((--n) && (--m));
+          return isClosing || !!(--n && --m);
         }
         return false;
       });
     }
     if (isClosing) {
       /* Check again 5 ms later */
-      if (this._allResources.size)
-        return;
+      if (this._allResources.size) return;
       clearInterval(this._houseKeepTimer);
       this._state = PoolState.CLOSED;
       this._requestsProcessing = 0;
@@ -412,10 +415,12 @@ export class Pool<T = any> extends EventEmitter {
 
   private _ensureMin(): void {
     process.nextTick(() => {
-      let k = Math.max(this.options.min - this._allResources.size,
-          this.options.minIdle - this._idleResources.length) - this.creating;
-      while (k-- > 0)
-        this._createResource();
+      let k =
+        Math.max(
+          this.options.min - this._allResources.size,
+          this.options.minIdle - this._idleResources.length,
+        ) - this.creating;
+      while (k-- > 0) this._createResource();
     });
   }
 
@@ -433,16 +438,16 @@ export class Pool<T = any> extends EventEmitter {
       case ResourceState.IDLE:
         item.idleTime = 0;
         /* istanbul ignore next*/
-        if (item.idleNode)
-          item.idleNode.remove();
+        if (item.idleNode) item.idleNode.remove();
         item.idleNode = undefined;
         break;
       case ResourceState.ACQUIRED:
       case ResourceState.VALIDATION:
         /* istanbul ignore next*/
-        if (item.acquiredNode)
-          item.acquiredNode.remove();
+        if (item.acquiredNode) item.acquiredNode.remove();
         item.acquiredNode = undefined;
+        break;
+      default:
         break;
     }
   }
@@ -451,8 +456,7 @@ export class Pool<T = any> extends EventEmitter {
     const isAcquired = item.state === ResourceState.ACQUIRED;
 
     const handleCallback = (err?: Error) => {
-      if (err)
-        return this._itemDestroy(item, callback);
+      if (err) return this._itemDestroy(item, callback);
       this._itemDetach(item);
       item.idleTime = Date.now();
       item.state = ResourceState.IDLE;
@@ -464,10 +468,8 @@ export class Pool<T = any> extends EventEmitter {
         this._idleResources.unshift(item);
         item.idleNode = this._idleResources.head;
       }
-      if (isAcquired)
-        this.emit('return', item.resource);
-      if (callback)
-        callback();
+      if (isAcquired) this.emit('return', item.resource);
+      if (callback) callback();
       // noinspection JSAccessibilityCheck
       this._processNextRequest();
     };
@@ -479,8 +481,7 @@ export class Pool<T = any> extends EventEmitter {
       } catch (e: any) {
         handleCallback(e);
       }
-    } else
-      handleCallback();
+    } else handleCallback();
   }
 
   private _itemDestroy(item: ResourceItem<T>, callback?: Callback) {
@@ -494,8 +495,7 @@ export class Pool<T = any> extends EventEmitter {
       }
       this.emit('destroy', item.resource);
       item.destroyed = true;
-      if (callback)
-        callback();
+      if (callback) callback();
     };
 
     try {
@@ -518,6 +518,4 @@ export class Pool<T = any> extends EventEmitter {
       if (callback) callback(e);
     }
   }
-
 }
-

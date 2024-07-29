@@ -9,18 +9,21 @@ module.exports = {
     '/cjs/',
     '/esm/',
     '/node_modules/',
-    '_support'
+    '_support',
   ],
   coverageReporters: ['lcov', 'text'],
   coverageDirectory: '<rootDir>/coverage/',
   testRegex: '.*\\.spec\\.ts$',
   transform: {
-    '^.+.ts?$': ['ts-jest', {
-      'tsconfig': '<rootDir>/test/tsconfig.json'
-    }]
+    '^.+.ts?$': [
+      'ts-jest',
+      {
+        tsconfig: '<rootDir>/test/tsconfig.json',
+      },
+    ],
   },
   moduleNameMapper: {
     '(\\..+)\\.js': '$1',
-    'lightning-pool': '<rootDir>/src'
-  }
+    'lightning-pool': '<rootDir>/src',
+  },
 };

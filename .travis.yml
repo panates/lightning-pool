@@ -1,19 +1,19 @@
 language: node_js
 node_js:
-  - "10"
-  - "11"
-  - "12"
-  - "13"
+  - '10'
+  - '11'
+  - '12'
+  - '13'
 cache:
   directories:
-    - "$HOME/.npm"
+    - '$HOME/.npm'
     - node_modules
 install:
-  - "npm install"
+  - 'npm install'
 script:
-  - "npm run-script travis-cover"
+  - 'npm run-script travis-cover'
 after_script:
-  - "npm install coveralls && cat ./coverage/lcov.info | coveralls"
+  - 'npm install coveralls && cat ./coverage/lcov.info | coveralls'
 branches:
   only:
     - master

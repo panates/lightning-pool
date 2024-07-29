@@ -1,23 +1,21 @@
 import { createPool } from '../src/index.js';
 import { TestFactory } from './support/TestFactory.js';
 
-describe('Ensuring min resources', function () {
+describe('Ensuring min resources', () => {
   let pool;
 
-  afterEach(function () {
-    return pool.closeAsync(true);
-  });
+  afterEach(() => pool.closeAsync(true));
 
-  it('should pool have at least `min` resource', function (done) {
+  it('should pool have at least `min` resource', done => {
     pool = createPool(new TestFactory(), {
-      min: 2
+      min: 2,
     });
     pool.start();
-    setTimeout(function () {
+    setTimeout(() => {
       pool.acquire();
     }, 10);
 
-    setTimeout(function () {
+    setTimeout(() => {
       expect(pool.size).toStrictEqual(2);
       expect(pool.available).toStrictEqual(1);
       expect(pool.acquired).toStrictEqual(1);
@@ -25,16 +23,16 @@ describe('Ensuring min resources', function () {
     }, 20);
   });
 
-  it('should pool have at least `minIdle` resource', function (done) {
+  it('should pool have at least `minIdle` resource', done => {
     pool = createPool(new TestFactory(), {
-      minIdle: 2
+      minIdle: 2,
     });
     pool.start();
-    setTimeout(function () {
+    setTimeout(() => {
       pool.acquire();
     }, 10);
 
-    setTimeout(function () {
+    setTimeout(() => {
       expect(pool.size).toStrictEqual(3);
       expect(pool.available).toStrictEqual(2);
       expect(pool.acquired).toStrictEqual(1);
@@ -42,22 +40,21 @@ describe('Ensuring min resources', function () {
     }, 20);
   });
 
-  it('should pool have at least `minIdle` available resource', function (done) {
+  it('should pool have at least `minIdle` available resource', done => {
     pool = createPool(new TestFactory(), {
       min: 2,
-      minIdle: 3
+      minIdle: 3,
     });
     pool.start();
-    setTimeout(function () {
+    setTimeout(() => {
       pool.acquire();
     }, 10);
 
-    setTimeout(function () {
+    setTimeout(() => {
       expect(pool.size).toStrictEqual(4);
       expect(pool.available).toStrictEqual(3);
       expect(pool.acquired).toStrictEqual(1);
       done();
     }, 20);
   });
-
 });

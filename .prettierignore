@@ -1,30 +1,15 @@
-# compiled output
 /node_modules
 /build
-node_modules
-coverage
-
-# environment variables
-.env
-.development.env
-
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-
-# OS
-.DS_Store
-
-# Tests
 /coverage
+/.idea
+/.circleci
+/.husky
+/.DS_Store
 /.nyc_output
+/.github
+**/*.md
 
 # IDEs and editors
-/.idea
 .project
 .classpath
 .c9/

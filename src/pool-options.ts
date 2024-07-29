@@ -13,11 +13,10 @@ const defaultValues = {
   minIdle: 0,
   max: 10,
   maxQueue: 1000,
-  validation: true
+  validation: true,
 };
 
 export class PoolOptions extends EventEmitter {
-
   private _acquireMaxRetries = defaultValues.acquireMaxRetries;
   private _acquireRetryWait = defaultValues.acquireRetryWait;
   private _acquireTimeoutMillis = defaultValues.acquireTimeoutMillis;
@@ -58,7 +57,8 @@ export class PoolOptions extends EventEmitter {
   }
 
   set acquireTimeoutMillis(val: number) {
-    this._acquireTimeoutMillis = val >= 0 ? val : defaultValues.acquireTimeoutMillis;
+    this._acquireTimeoutMillis =
+      val >= 0 ? val : defaultValues.acquireTimeoutMillis;
     this.emit('change', 'acquireTimeoutMillis', this._acquireTimeoutMillis);
   }
 
@@ -74,7 +74,6 @@ export class PoolOptions extends EventEmitter {
 
   get idleTimeoutMillis(): number {
     return this._idleTimeoutMillis;
-
   }
 
   set idleTimeoutMillis(val: number) {
@@ -97,8 +96,7 @@ export class PoolOptions extends EventEmitter {
 
   set min(val: number) {
     this._min = val >= 0 ? val : defaultValues.min;
-    if (this._min > this._max)
-      this._max = this._min;
+    if (this._min > this._max) this._max = this._min;
     this.emit('change', 'min', this._min);
   }
 
@@ -117,8 +115,7 @@ export class PoolOptions extends EventEmitter {
 
   set max(val: number) {
     this._max = val >= 0 ? Math.max(val, 1) : defaultValues.max;
-    if (this._min > this._max)
-      this._min = this._max;
+    if (this._min > this._max) this._min = this._max;
     this.emit('change', 'max', this._max);
   }
 
@@ -145,9 +142,7 @@ export class PoolOptions extends EventEmitter {
     const proto = Object.getPrototypeOf(this);
     for (const k of Object.keys(values)) {
       const desc = Object.getOwnPropertyDescriptor(proto, k);
-      if (desc && desc.set)
-        this[k] = values[k];
+      if (desc && desc.set) this[k] = values[k];
     }
   }
-
 }

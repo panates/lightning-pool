@@ -2,11 +2,9 @@ import { Callback } from './definitions.js';
 import { Pool } from './pool.js';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-function noop() {
-}
+function noop() {}
 
 export class PoolRequest {
-
   created: number;
   callback: Callback;
   timeoutHandle: any;
@@ -26,8 +24,6 @@ export class PoolRequest {
   }
 
   stopTimout() {
-    if (this.timeoutHandle)
-      clearTimeout(this.timeoutHandle);
+    if (this.timeoutHandle) clearTimeout(this.timeoutHandle);
   }
-
 }

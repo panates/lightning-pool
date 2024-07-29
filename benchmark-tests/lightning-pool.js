@@ -1,51 +1,56 @@
 const assert = require('assert');
-const {createPool} = require('../');
-const TestFactory = require('./TestFactory');
+const { createPool } = require('lightning-pool');
+const TestFactory = require('./TestFactory.js');
 
 module.exports = {
   name: 'lightning-pool',
   run: runTest,
-  clear: clearPool
+  clear: clearPool,
 };
 
 let pool;
 
 function runTest(options, callback) {
-  pool = createPool(new TestFactory({
-        acquireWait: options.acquireWait,
-        usePromise: options.usePromise
-      }),
-      {
-        max: options.max,
-        maxQueue: options.testCount
-      });
+  pool = createPool(
+    new TestFactory({
+      acquireWait: options.acquireWait,
+      usePromise: options.usePromise,
+    }),
+    {
+      max: options.max,
+      maxQueue: options.testCount,
+    },
+  );
 
   let k = 0;
   let t = 0;
   const testCount = options.testCount;
   const releaseTime = options.releaseTime || 1;
   for (let i = 0; i < testCount; i++) {
-    pool.acquire(function(err, obj) {
+    pool.acquire((err, obj) => {
       assert(!err, err);
       k++;
       t++;
-      setTimeout(function() {
-        pool.releaseAsync(obj).then(function() {
-          t--;
-          if (k === testCount && t === 0) {
-            k = 0;
-            callback();
-          }
-        }).catch(function(e) {
-          throw e;
-        });
+      setTimeout(() => {
+        pool
+          .releaseAsync(obj)
+          .then(() => {
+            t--;
+            if (k === testCount && t === 0) {
+              k = 0;
+              callback();
+            }
+          })
+          .catch(e => {
+            throw e;
+          });
       }, releaseTime);
     });
   }
 }
 
 function clearPool(callback) {
-  pool.close(true, function() {
+  pool.close(true, () => {
     callback();
   });
 }

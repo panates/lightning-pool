@@ -8,7 +8,6 @@
     "noEmit": true,
     "sourceMap": true,
     "baseUrl": "./",
-    "paths": {
-    }
+    "paths": {}
   }
 }

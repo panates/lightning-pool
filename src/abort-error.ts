@@ -1,2 +1,1 @@
-export class AbortError extends Error {
-}
+export class AbortError extends Error {}

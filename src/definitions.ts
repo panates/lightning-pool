@@ -4,18 +4,17 @@ export enum PoolState {
   IDLE = 0,
   STARTED = 1,
   CLOSING = 2,
-  CLOSED = 3
+  CLOSED = 3,
 }
 
 export enum ResourceState {
   IDLE = 0,
   ACQUIRED = 1,
-  VALIDATION = 2
+  VALIDATION = 2,
 }
 
 export interface PoolFactory<T = any> {
-
-  create(info?: { tries: number, maxRetries: number }): Promise<T> | T;
+  create(info?: { tries: number; maxRetries: number }): Promise<T> | T;
 
   destroy(resource: T): Promise<void> | void;
 
@@ -23,7 +22,6 @@ export interface PoolFactory<T = any> {
 
   validate?(resource: T): Promise<void> | void;
 }
-
 
 export interface PoolConfiguration {
   acquireMaxRetries?: number;
