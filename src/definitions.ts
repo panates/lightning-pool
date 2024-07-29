@@ -1,4 +1,4 @@
-export type Callback = (e?: Error, ...args: any[]) => void;
+export type Callback = (e?: unknown, ...args: any[]) => void;
 
 export enum PoolState {
   IDLE = 0,

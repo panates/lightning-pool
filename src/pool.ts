@@ -191,13 +191,12 @@ export class Pool<T = any> extends EventEmitter {
    * Acquires `resource` from the pool or create a new one
    */
   acquire(): Promise<T>;
-  acquire(callback): void;
-  acquire(arg0?): any {
-    if (!arg0) return promisify.fromCallback<T>(cb => this.acquire(cb));
-    const callback = arg0;
+  acquire(callback: Callback): void;
+  acquire(callback?: Callback): any {
+    if (!callback) return promisify.fromCallback<T>(cb => this.acquire(cb));
     try {
       this.start();
-    } catch (e) {
+    } catch (e: unknown) {
       return callback(e);
     }
     if (this.options.maxQueue && this.pending >= this.options.maxQueue) {
@@ -271,7 +270,7 @@ export class Pool<T = any> extends EventEmitter {
     if (!request) return;
 
     this._requestsProcessing++;
-    const handleCallback = (err?: Error, item?: ResourceItem<T>) => {
+    const handleCallback = (err?: unknown, item?: ResourceItem<T>) => {
       this._requestsProcessing--;
       request.stopTimout();
       try {
@@ -296,7 +295,7 @@ export class Pool<T = any> extends EventEmitter {
     if (item) {
       /* Validate resource */
       if (this.options.validation && this._factory.validate) {
-        this._itemValidate(item, (err?: Error) => {
+        this._itemValidate(item, (err?: unknown) => {
           /* Destroy resource on validation error */
           if (err) {
             this._itemDestroy(item);
