@@ -1,4 +1,4 @@
-export type Callback = (e?: Error, ...args: any[]) => void;
+export type Callback = (error?: unknown, ...args: any[]) => void;
 
 export enum PoolState {
   IDLE = 0,
@@ -14,7 +14,10 @@ export enum ResourceState {
 }
 
 export interface PoolFactory<T = any> {
-  create(info?: { tries: number; maxRetries: number }): Promise<T> | T;
+  create(
+    info?: { tries: number; maxRetries: number },
+    options?: Record<string, any>,
+  ): Promise<T> | T;
 
   destroy(resource: T): Promise<void> | void;
 

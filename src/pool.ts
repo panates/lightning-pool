@@ -129,7 +129,7 @@ export class Pool<T = any> extends EventEmitter {
   close(callback?: Callback): void;
   close(terminateWait: number, callback?: Callback): void;
   close(force: boolean, callback?: Callback): void;
-  close(arg0?, arg1?): any {
+  close(arg0?: any, arg1?: any): any {
     let terminateWait = Infinity;
     let callback: Callback;
 
@@ -190,20 +190,31 @@ export class Pool<T = any> extends EventEmitter {
   /**
    * Acquires `resource` from the pool or create a new one
    */
-  acquire(): Promise<T>;
-  acquire(callback): void;
-  acquire(arg0?): any {
-    if (!arg0) return promisify.fromCallback<T>(cb => this.acquire(cb));
-    const callback = arg0;
+  acquire(callback: Callback): void;
+  acquire(factoryCreateOptions: Record<string, any>, callback: Callback): void;
+  acquire(factoryCreateOptions?: Record<string, any>): Promise<T>;
+  acquire(arg0?: any, arg1?: any): any {
+    let callback: Callback | undefined;
+    let factoryCreateOptions: Record<string, any> | undefined;
+    if (typeof arg0 === 'function') {
+      callback = arg0;
+    } else if (typeof arg0 === 'object') {
+      factoryCreateOptions = arg0;
+      if (typeof arg1 === 'function') callback = arg1;
+    }
+
+    if (!callback) return promisify.fromCallback<T>(cb => this.acquire(cb));
     try {
       this.start();
-    } catch (e) {
+    } catch (e: any) {
       return callback(e);
     }
     if (this.options.maxQueue && this.pending >= this.options.maxQueue) {
       return callback(new Error('Pool queue is full'));
     }
-    this._requestQueue.push(new PoolRequest(this, callback));
+    this._requestQueue.push(
+      new PoolRequest(this, callback, factoryCreateOptions),
+    );
     this._processNextRequest();
   }
 
@@ -271,7 +282,7 @@ export class Pool<T = any> extends EventEmitter {
     if (!request) return;
 
     this._requestsProcessing++;
-    const handleCallback = (err?: Error, item?: ResourceItem<T>) => {
+    const handleCallback = (err?: unknown, item?: ResourceItem<T>) => {
       this._requestsProcessing--;
       request.stopTimout();
       try {
@@ -296,7 +307,7 @@ export class Pool<T = any> extends EventEmitter {
     if (item) {
       /* Validate resource */
       if (this.options.validation && this._factory.validate) {
-        this._itemValidate(item, (err?: Error) => {
+        this._itemValidate(item, (err?: unknown) => {
           /* Destroy resource on validation error */
           if (err) {
             this._itemDestroy(item);
@@ -364,7 +375,7 @@ export class Pool<T = any> extends EventEmitter {
 
     const tryCreate = () => {
       try {
-        const o = this._factory.create({ tries, maxRetries });
+        const o = this._factory.create({ tries, maxRetries }, request?.options);
         /* istanbul ignore next */
         if (!o) {
           return handleCallback(new AbortError('Factory returned no resource'));
