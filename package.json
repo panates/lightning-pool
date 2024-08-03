@@ -42,6 +42,7 @@
   "files": [
     "cjs/",
     "esm/",
+    "typings/",
     "LICENSE",
     "README.md"
   ],
