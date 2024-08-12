@@ -20,7 +20,7 @@
     "jest": "^29.7.0",
     "npm-run-path": "^5.3.0",
     "prettier": "^3.3.3",
-    "ts-cleanup": "^1.2.0",
+    "ts-cleanup": "^1.2.2",
     "ts-jest": "^29.2.4",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
@@ -36,8 +36,8 @@
     "clean:src": "ts-cleanup -s src --all | ts-cleanup -s test",
     "prebuild": "npm run clean:dist && npm run lint",
     "build": "npm run build:cjs && npm run build:esm",
-    "build:cjs": "tsc -b tsconfig-build-cjs.json",
-    "build:esm": "tsc -b tsconfig-build-esm.json",
+    "build:cjs": "tsc -b tsconfig-build-cjs.json && cp support/package.cjs.json ./build/cjs/package.json",
+    "build:esm": "tsc -b tsconfig-build-esm.json && cp support/package.esm.json ./build/esm/package.json",
     "postbuild": "npm run postbuild:copyfiles && node ./support/postbuild.cjs",
     "postbuild:copyfiles": "cp LICENSE README.md ./build && cp package.esm.json ./build/esm/package.json",
     "test": "jest --runInBand --detectOpenHandles",
@@ -46,15 +46,20 @@
     "precitest": "rimraf coverage",
     "citest": "jest --coverage --coverageReporters=lcov"
   },
-  "main": "./cjs/index.js",
-  "module": "./esm/index.js",
-  "types": "./types/index.d.ts",
+  "type": "module",
   "exports": {
     ".": {
-      "require": "./cjs/index.js",
-      "import": "./esm/index.js",
-      "types": "./types/index.d.ts"
-    }
+      "import": {
+        "types": "./types/index.d.ts",
+        "default": "./esm/index.js"
+      },
+      "require": {
+        "types": "./types/index.d.ts",
+        "default": "./cjs/index.js"
+      },
+      "default": "./esm/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "contributors": [
     "Eray Hanoglu <e.hanoglu@panates.com>"
