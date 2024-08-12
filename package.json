@@ -20,7 +20,7 @@
     "jest": "^29.7.0",
     "npm-run-path": "^5.3.0",
     "prettier": "^3.3.3",
-    "ts-cleanup": "^1.1.0",
+    "ts-cleanup": "^1.2.0",
     "ts-jest": "^29.2.4",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
