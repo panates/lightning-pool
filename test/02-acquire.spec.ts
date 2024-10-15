@@ -1,4 +1,5 @@
 import { AbortError, createPool, Pool } from '../src/index.js';
+import { createDoneCallback } from './support/create-done-callback.js';
 import { TestFactory } from './support/TestFactory.js';
 
 describe('Acquiring', () => {
@@ -83,7 +84,8 @@ describe('Acquiring', () => {
     return expect(() => pool.acquire()).rejects.toThrow('Aborted');
   });
 
-  it('should not exceed resource limit', done => {
+  it('should not exceed resource limit', _done => {
+    const done = createDoneCallback(_done);
     pool = createPool(new TestFactory(), { max: 3 });
     for (let i = 0; i < 4; i++) {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -102,7 +104,8 @@ describe('Acquiring', () => {
     }, 10);
   });
 
-  it('should not exceed queue limit', done => {
+  it('should not exceed queue limit', _done => {
+    const done = createDoneCallback(_done);
     pool = createPool(new TestFactory(), {
       max: 1,
       maxQueue: 1,
@@ -121,7 +124,8 @@ describe('Acquiring', () => {
     acquire();
   });
 
-  it('should cancel queued request if acquire timed out', done => {
+  it('should cancel queued request if acquire timed out', _done => {
+    const done = createDoneCallback(_done);
     pool = createPool(
       new TestFactory({
         acquireWait: 10,
@@ -132,17 +136,26 @@ describe('Acquiring', () => {
       },
     );
     pool.acquire((err, obj) => {
-      expect(err).not.toBeDefined();
-      expect(obj).toBeDefined();
+      try {
+        expect(err).not.toBeDefined();
+        expect(obj).toBeDefined();
+      } catch (e) {
+        done(e);
+      }
     });
     pool.acquire((err, obj) => {
-      expect(err).toBeDefined();
-      expect(obj).not.toBeDefined();
-      done();
+      try {
+        expect(err).toBeDefined();
+        expect(obj).not.toBeDefined();
+        done();
+      } catch (e) {
+        done(e);
+      }
     });
   });
 
-  it('should cancel retry if acquire timed out', done => {
+  it('should cancel retry if acquire timed out', _done => {
+    const done = createDoneCallback(_done);
     pool = createPool(
       new TestFactory({
         acquireWait: 20,
@@ -153,17 +166,26 @@ describe('Acquiring', () => {
       },
     );
     pool.acquire((err, obj) => {
-      expect(err).toBeDefined();
-      expect(obj).not.toBeDefined();
+      try {
+        expect(err).toBeDefined();
+        expect(obj).not.toBeDefined();
+      } catch (e) {
+        done(e);
+      }
     });
     pool.acquire((err, obj) => {
-      expect(err).toBeDefined();
-      expect(obj).not.toBeDefined();
-      done();
+      try {
+        expect(err).toBeDefined();
+        expect(obj).not.toBeDefined();
+        done();
+      } catch (e) {
+        done(e);
+      }
     });
   });
 
-  it('should cancel retry if create aborted', done => {
+  it('should cancel retry if create aborted', _done => {
+    const done = createDoneCallback(_done);
     let i = 0;
     pool = createPool(
       new TestFactory({
@@ -179,18 +201,27 @@ describe('Acquiring', () => {
       },
     );
     pool.acquire((err, obj) => {
-      expect(err).toBeDefined();
-      expect(obj).not.toBeDefined();
+      try {
+        expect(err).toBeDefined();
+        expect(obj).not.toBeDefined();
+      } catch (e) {
+        done(e);
+      }
     });
     pool.acquire((err, obj) => {
-      expect(err).toBeDefined();
-      expect(obj).not.toBeDefined();
-      expect(i).toStrictEqual(2);
-      done();
+      try {
+        expect(err).toBeDefined();
+        expect(obj).not.toBeDefined();
+        expect(i).toStrictEqual(2);
+        done();
+      } catch (e) {
+        done(e);
+      }
     });
   });
 
-  it('should fail when retry limit exceeds', done => {
+  it('should fail when retry limit exceeds', _done => {
+    const done = createDoneCallback(_done);
     pool = createPool(
       new TestFactory({
         retryTest: 5,
@@ -204,13 +235,18 @@ describe('Acquiring', () => {
       },
     );
     pool.acquire((err, obj) => {
-      expect(err).toBeDefined();
-      expect(obj).not.toBeDefined();
-      done();
+      try {
+        expect(err).toBeDefined();
+        expect(obj).not.toBeDefined();
+        done();
+      } catch (e) {
+        done(e);
+      }
     });
   });
 
-  it('should destroy idle resource after timeout', done => {
+  it('should destroy idle resource after timeout', _done => {
+    const done = createDoneCallback(_done);
     let t;
     let o;
     pool = createPool(new TestFactory(), {
@@ -241,7 +277,8 @@ describe('Acquiring', () => {
     });
   });
 
-  it('should keep max while resource creating', done => {
+  it('should keep max while resource creating', _done => {
+    const done = createDoneCallback(_done);
     let i = 0;
     const factory = new TestFactory();
     factory.create = function (...args: any[]) {
@@ -299,21 +336,30 @@ describe('Acquiring', () => {
     }, 30);
   });
 
-  it('should acquire in fifo order default', done => {
+  it('should acquire in fifo order default', _done => {
+    const done = createDoneCallback(_done);
     let k = 0;
     pool = createPool(new TestFactory({ resetWait: 1 }));
     const acquire = function () {
       pool.acquire((err, obj) => {
-        expect(err).not.toBeDefined();
-        pool.release(obj);
+        try {
+          expect(err).not.toBeDefined();
+          pool.release(obj);
+        } catch (e) {
+          done(e);
+        }
       });
     };
     pool.on('return', () => {
       if (++k === 2) {
         pool.acquire((err, obj) => {
-          expect(err).not.toBeDefined();
-          expect(obj.id).toStrictEqual(1);
-          done();
+          try {
+            expect(err).not.toBeDefined();
+            expect(obj.id).toStrictEqual(1);
+            done();
+          } catch (e) {
+            done(e);
+          }
         });
       }
     });
@@ -322,23 +368,32 @@ describe('Acquiring', () => {
     acquire();
   });
 
-  it('should acquire in lifo order', done => {
+  it('should acquire in lifo order', _done => {
+    const done = createDoneCallback(_done);
     let k = 0;
     pool = createPool(new TestFactory({ resetWait: 1 }), {
       fifo: false,
     });
     const acquire = function () {
       pool.acquire((err, obj) => {
-        expect(err).not.toBeDefined();
-        pool.release(obj);
+        try {
+          expect(err).not.toBeDefined();
+          pool.release(obj);
+        } catch (e) {
+          done(e);
+        }
       });
     };
     pool.on('return', () => {
       if (++k === 2) {
         pool.acquire((err, obj) => {
-          expect(err).not.toBeDefined();
-          expect(obj.id).toStrictEqual(2);
-          done();
+          try {
+            expect(err).not.toBeDefined();
+            expect(obj.id).toStrictEqual(2);
+            done();
+          } catch (e) {
+            done(e);
+          }
         });
       }
     });
@@ -347,23 +402,33 @@ describe('Acquiring', () => {
     acquire();
   });
 
-  it('should pool.isAcquired() check any resource is currently acquired', done => {
+  it('should pool.isAcquired() check any resource is currently acquired', _done => {
+    const done = createDoneCallback(_done);
     pool = createPool(new TestFactory());
     pool.acquire((err, obj) => {
-      expect(err).not.toBeDefined();
-      expect(pool.isAcquired(obj)).toStrictEqual(true);
-      expect(pool.isAcquired({})).toStrictEqual(false);
-      done();
+      try {
+        expect(err).not.toBeDefined();
+        expect(pool.isAcquired(obj)).toStrictEqual(true);
+        expect(pool.isAcquired({})).toStrictEqual(false);
+        done();
+      } catch (e) {
+        done(e);
+      }
     });
   });
 
-  it('should pool.includes() check any resource is in pool', done => {
+  it('should pool.includes() check any resource is in pool', _done => {
+    const done = createDoneCallback(_done);
     pool = createPool(new TestFactory());
     pool.acquire((err, obj) => {
-      expect(err).not.toBeDefined();
-      expect(pool.includes(obj)).toStrictEqual(true);
-      expect(pool.includes({})).toStrictEqual(false);
-      done();
+      try {
+        expect(err).not.toBeDefined();
+        expect(pool.includes(obj)).toStrictEqual(true);
+        expect(pool.includes({})).toStrictEqual(false);
+        done();
+      } catch (e) {
+        done(e);
+      }
     });
   });
 });

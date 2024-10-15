@@ -4,10 +4,9 @@ import { TestFactory } from './support/TestFactory.js';
 describe('Creating pool', () => {
   let pool;
 
-  it('should createPool must be a function', done => {
+  it('should createPool must be a function', () => {
     pool = createPool(new TestFactory());
     expect(typeof createPool).toStrictEqual('function');
-    done();
   });
 
   it('should validate `factory` argument', () => {
@@ -165,10 +164,9 @@ describe('Creating pool', () => {
     expect(pool.options.fifo).toStrictEqual(true);
   });
 
-  it('should set fifo option', done => {
+  it('should set fifo option', () => {
     pool = createPool(new TestFactory(), { fifo: false });
     expect(pool.options.fifo).toStrictEqual(false);
-    done();
   });
 
   it('should default idleTimeoutMillis option must be 30000', () => {

@@ -1,4 +1,5 @@
 import { createPool } from '../src/index.js';
+import { createDoneCallback } from './support/create-done-callback.js';
 import { TestFactory } from './support/TestFactory.js';
 
 describe('Releasing', () => {
@@ -6,105 +7,155 @@ describe('Releasing', () => {
 
   afterEach(() => pool.closeAsync(true));
 
-  it('should release with pool.release()', done => {
+  it('should release with pool.release()', _done => {
+    const done = createDoneCallback(_done);
     pool = createPool(new TestFactory(), {
       max: 3,
     });
     let o;
     const acquire = () => {
       pool.acquire((err, obj) => {
-        expect(err).not.toBeDefined();
-        o = o || obj;
+        try {
+          expect(err).not.toBeDefined();
+          o = o || obj;
+        } catch (e) {
+          done(e);
+        }
       });
     };
     acquire();
     acquire();
     setTimeout(() => {
-      expect(pool.size).toStrictEqual(2);
-      expect(pool.acquired).toStrictEqual(2);
-      expect(pool.pending).toStrictEqual(0);
-      expect(pool.available).toStrictEqual(0);
-      pool.once('return', obj => {
-        expect(obj).toEqual(o);
+      try {
         expect(pool.size).toStrictEqual(2);
-        expect(pool.acquired).toStrictEqual(1);
+        expect(pool.acquired).toStrictEqual(2);
         expect(pool.pending).toStrictEqual(0);
-        expect(pool.available).toStrictEqual(1);
-        done();
-      });
-      pool.release(o);
+        expect(pool.available).toStrictEqual(0);
+        pool.once('return', obj => {
+          try {
+            expect(obj).toEqual(o);
+            expect(pool.size).toStrictEqual(2);
+            expect(pool.acquired).toStrictEqual(1);
+            expect(pool.pending).toStrictEqual(0);
+            expect(pool.available).toStrictEqual(1);
+            _done();
+          } catch (e) {
+            done(e);
+          }
+        });
+        pool.release(o);
+      } catch (e) {
+        done(e);
+      }
     }, 10);
   });
 
-  it('should destroy with pool.destroy()', done => {
+  it('should destroy with pool.destroy()', _done => {
+    const done = createDoneCallback(_done);
     pool = createPool(new TestFactory(), {
       max: 3,
     });
     let o;
     const acquire = function () {
       pool.acquire((err, obj) => {
-        expect(err).not.toBeDefined();
-        o = o || obj;
+        try {
+          expect(err).not.toBeDefined();
+          o = o || obj;
+        } catch (e) {
+          done(e);
+        }
       });
     };
     acquire();
     acquire();
     setTimeout(() => {
-      expect(pool.size).toStrictEqual(2);
-      expect(pool.acquired).toStrictEqual(2);
-      expect(pool.pending).toStrictEqual(0);
-      expect(pool.available).toStrictEqual(0);
-      pool.once('destroy', obj => {
-        expect(obj).toEqual(o);
-        expect(pool.size).toStrictEqual(1);
-        expect(pool.acquired).toStrictEqual(1);
+      try {
+        expect(pool.size).toStrictEqual(2);
+        expect(pool.acquired).toStrictEqual(2);
         expect(pool.pending).toStrictEqual(0);
         expect(pool.available).toStrictEqual(0);
+        pool.once('destroy', obj => {
+          try {
+            expect(obj).toEqual(o);
+            expect(pool.size).toStrictEqual(1);
+            expect(pool.acquired).toStrictEqual(1);
+            expect(pool.pending).toStrictEqual(0);
+            expect(pool.available).toStrictEqual(0);
+            done();
+          } catch (e) {
+            done(e);
+          }
+        });
+        pool.destroy(o);
+      } catch (e) {
+        done(e);
+      }
+    }, 10);
+  });
+
+  it('should not release if resource is not in pool', _done => {
+    const done = createDoneCallback(_done);
+    pool = createPool(new TestFactory());
+    pool.acquire((err, obj) => {
+      try {
+        expect(err).not.toBeDefined();
+        expect(obj).toBeDefined();
+        pool.release(1);
+      } catch (e) {
+        done(e);
+      }
+    });
+    setTimeout(() => {
+      try {
+        expect(pool.size).toStrictEqual(1);
         done();
-      });
-      pool.destroy(o);
+      } catch (e) {
+        done(e);
+      }
     }, 10);
   });
 
-  it('should not release if resource is not in pool', done => {
+  it('should not destroy if resource is not in pool', _done => {
+    const done = createDoneCallback(_done);
     pool = createPool(new TestFactory());
     pool.acquire((err, obj) => {
-      expect(err).not.toBeDefined();
-      expect(obj).toBeDefined();
-      pool.release(1);
+      try {
+        expect(err).not.toBeDefined();
+        expect(obj).toBeDefined();
+        pool.destroy(1);
+      } catch (e) {
+        done(e);
+      }
     });
     setTimeout(() => {
-      expect(pool.size).toStrictEqual(1);
-      done();
+      try {
+        expect(pool.size).toStrictEqual(1);
+        done();
+      } catch (e) {
+        done(e);
+      }
     }, 10);
   });
 
-  it('should not destroy if resource is not in pool', done => {
+  it('should not release if already idle', _done => {
+    const done = createDoneCallback(_done);
     pool = createPool(new TestFactory());
     pool.acquire((err, obj) => {
-      expect(err).not.toBeDefined();
-      expect(obj).toBeDefined();
-      pool.destroy(1);
-    });
-    setTimeout(() => {
-      expect(pool.size).toStrictEqual(1);
-      done();
-    }, 10);
-  });
-
-  it('should not release if already idle', done => {
-    pool = createPool(new TestFactory());
-    pool.acquire((err, obj) => {
-      expect(err).not.toBeDefined();
-      pool.release(obj);
-      setTimeout(() => {
+      try {
+        expect(err).not.toBeDefined();
         pool.release(obj);
-        done();
-      }, 10);
+        setTimeout(() => {
+          pool.release(obj);
+          done();
+        }, 10);
+      } catch (e) {
+        done(e);
+      }
     });
   });
 
-  it('should release but keep min', done => {
+  it('should release but keep min', _done => {
+    const done = createDoneCallback(_done);
     pool = createPool(new TestFactory(), {
       min: 1,
       idleTimeoutMillis: 1,
@@ -112,25 +163,34 @@ describe('Releasing', () => {
     });
     const acquire = function () {
       pool.acquire((err, obj) => {
-        expect(err).not.toBeDefined();
-        setTimeout(() => {
-          pool.release(obj);
-        }, 5);
+        try {
+          expect(err).not.toBeDefined();
+          setTimeout(() => {
+            pool.release(obj);
+          }, 5);
+        } catch (e) {
+          done(e);
+        }
       });
     };
     acquire();
     acquire();
     acquire();
     setTimeout(() => {
-      expect(pool.size).toStrictEqual(1);
-      expect(pool.acquired).toStrictEqual(0);
-      expect(pool.pending).toStrictEqual(0);
-      expect(pool.available).toStrictEqual(1);
-      done();
+      try {
+        expect(pool.size).toStrictEqual(1);
+        expect(pool.acquired).toStrictEqual(0);
+        expect(pool.pending).toStrictEqual(0);
+        expect(pool.available).toStrictEqual(1);
+        done();
+      } catch (e) {
+        done(e);
+      }
     }, 20);
   });
 
-  it('should release but keep minIdle', done => {
+  it('should release but keep minIdle', _done => {
+    const done = createDoneCallback(_done);
     pool = createPool(new TestFactory(), {
       minIdle: 1,
       idleTimeoutMillis: 1,
@@ -138,21 +198,29 @@ describe('Releasing', () => {
     });
     const acquire = function () {
       pool.acquire((err, obj) => {
-        expect(err).not.toBeDefined();
-        setTimeout(() => {
-          pool.release(obj);
-        }, 5);
+        try {
+          expect(err).not.toBeDefined();
+          setTimeout(() => {
+            pool.release(obj);
+          }, 5);
+        } catch (e) {
+          done(e);
+        }
       });
     };
     acquire();
     acquire();
     acquire();
     setTimeout(() => {
-      expect(pool.size).toStrictEqual(1);
-      expect(pool.acquired).toStrictEqual(0);
-      expect(pool.pending).toStrictEqual(0);
-      expect(pool.available).toStrictEqual(1);
-      done();
+      try {
+        expect(pool.size).toStrictEqual(1);
+        expect(pool.acquired).toStrictEqual(0);
+        expect(pool.pending).toStrictEqual(0);
+        expect(pool.available).toStrictEqual(1);
+        done();
+      } catch (e) {
+        done(e);
+      }
     }, 40);
   });
 
@@ -174,7 +242,8 @@ describe('Releasing', () => {
     );
   });
 
-  it('should emit destroy-error', done => {
+  it('should emit destroy-error', _done => {
+    const done = createDoneCallback(_done);
     pool = createPool(
       new TestFactory({
         destroy() {
@@ -187,13 +256,21 @@ describe('Releasing', () => {
       },
     );
     pool.on('destroy-error', () => {
-      expect(pool.size).toStrictEqual(0);
-      done();
+      try {
+        expect(pool.size).toStrictEqual(0);
+        done();
+      } catch (e) {
+        done(e);
+      }
     });
 
     pool.acquire((err, obj) => {
-      expect(err).not.toBeDefined();
-      pool.release(obj);
+      try {
+        expect(err).not.toBeDefined();
+        pool.release(obj);
+      } catch (e) {
+        done(e);
+      }
     });
   });
 });

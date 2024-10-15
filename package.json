@@ -2,13 +2,12 @@
   "name": "lightning-pool",
   "description": "Fastest generic Pool written with TypeScript",
   "version": "4.9.0",
-  "author": "Panates Ltd.",
+  "author": "Panates",
   "license": "MIT",
-  "repository": "panates/lightning-pool",
   "dependencies": {
     "doublylinked": "^2.5.4",
     "putil-promisify": "^1.10.1",
-    "tslib": "^2.7.0"
+    "tslib": "^2.8.0"
   },
   "devDependencies": {
     "@panates/eslint-config": "^1.0.21",
@@ -64,6 +63,10 @@
   "main": "./cjs/index.js",
   "module": "./esm/index.js",
   "types": "./types/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/panates/lightning-pool.git"
+  },
   "contributors": [
     "Eray Hanoglu <e.hanoglu@panates.com>"
   ],

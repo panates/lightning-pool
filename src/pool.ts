@@ -487,23 +487,20 @@ export class Pool<T = any> extends EventEmitter {
     this._itemDetach(item);
 
     const handleCallback = (err?: Error) => {
-      if (err) {
-        this.emit('destroy-error', err, item.resource);
-        /* istanbul ignore next */
-        return callback && callback(err);
-      }
-      this.emit('destroy', item.resource);
       item.destroyed = true;
-      if (callback) callback();
+      this._allResources.delete(item.resource);
+      if (err) this.emit('destroy-error', err, item.resource);
+      else this.emit('destroy', item.resource);
+      if (callback) callback(err);
     };
 
     try {
-      this._allResources.delete(item.resource);
-      this._processNextRequest();
       const o = this._factory.destroy(item.resource);
       promisify.await(o, handleCallback);
     } catch (e: any) {
       handleCallback(e);
+    } finally {
+      this._processNextRequest();
     }
   }
 

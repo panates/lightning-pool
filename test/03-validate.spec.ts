@@ -1,4 +1,5 @@
 import { createPool } from '../src/index.js';
+import { createDoneCallback } from './support/create-done-callback.js';
 import { TestFactory } from './support/TestFactory.js';
 
 describe('Validating', () => {
@@ -42,24 +43,33 @@ describe('Validating', () => {
     );
   });
 
-  it('should not validate if options.validation is false', done => {
+  it('should not validate if options.validation is false', _done => {
+    const done = createDoneCallback(_done);
     let k = 0;
     pool = createPool(new TestFactory(), {
       validation: false,
     });
     const acquire = () => {
       pool.acquire((err, obj) => {
-        expect(err).not.toBeDefined();
-        pool.release(obj);
+        try {
+          expect(err).not.toBeDefined();
+          pool.release(obj);
+        } catch (e) {
+          done(e);
+        }
       });
     };
     pool.on('return', () => {
       if (++k === 2) {
         pool.acquire((err, obj) => {
-          expect(err).not.toBeDefined();
-          expect(obj.id).toStrictEqual(1);
-          expect(obj.validateCount).toStrictEqual(0);
-          done();
+          try {
+            expect(err).not.toBeDefined();
+            expect(obj.id).toStrictEqual(1);
+            expect(obj.validateCount).toStrictEqual(0);
+            done();
+          } catch (e) {
+            done(e);
+          }
         });
       }
     });
