@@ -50,11 +50,11 @@ export class Pool<T = any> extends EventEmitter {
     }
 
     const opts = (this._options = new PoolOptions(this));
+    if (config) this.options.assign(config);
     opts.on('change', (prop: string, val) => {
       if (prop === 'houseKeepInterval') this._setHouseKeep(val as number);
       if (prop === 'min' || prop === 'minIdle') this._ensureMin();
     });
-    if (config) this.options.assign(config);
     this._factory = factory;
   }
 
