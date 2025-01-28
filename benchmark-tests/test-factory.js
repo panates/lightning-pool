@@ -72,4 +72,3 @@ function TestResource(id) {
   this.resetCount = 0;
   this.validateCount = 0;
 }
-
