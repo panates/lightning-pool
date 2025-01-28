@@ -2,7 +2,7 @@
  * Generic class for handling creation of resources
  * for testing
  */
-class TestFactory {
+export default class TestFactory {
   /**
    *
    * @param {Object} [opts]
@@ -73,4 +73,3 @@ function TestResource(id) {
   this.validateCount = 0;
 }
 
-module.exports = TestFactory;

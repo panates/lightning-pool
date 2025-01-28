@@ -88,7 +88,6 @@ describe('Acquiring', () => {
     const done = createDoneCallback(_done);
     pool = createPool(new TestFactory(), { max: 3 });
     for (let i = 0; i < 4; i++) {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       pool.acquire();
     }
     setTimeout(() => {

@@ -14,7 +14,6 @@ describe('Start/Close', () => {
     pool.on('start', () => {
       setTimeout(() => done(), 10);
     });
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     pool.acquire(() => {});
   });
 

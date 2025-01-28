@@ -31,7 +31,6 @@ export class TestFactory implements PoolFactory<TestResource> {
     this.resetWait = (opts && opts.resetWait) || 0;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   create(props, options?: any): Promise<TestResource> {
     return new Promise((resolve, reject) => {
       const id = ++this.created;

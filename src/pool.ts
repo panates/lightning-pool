@@ -285,7 +285,7 @@ export class Pool<T = any> extends EventEmitter {
           request.callback(undefined, item.resource);
           this.emit('acquire', item.resource);
         } else request.callback(err);
-      } catch (ignored) {
+      } catch {
         // ignored
       }
       this._processNextRequest();
@@ -317,7 +317,7 @@ export class Pool<T = any> extends EventEmitter {
     // Prevents errors while calling emit()
     try {
       return super.emit(event, ...args);
-    } catch (e) {
+    } catch {
       return true;
     }
   }

@@ -1,11 +1,13 @@
-const genericPool = require('generic-pool');
-const TestFactory = require('./TestFactory');
+import genericPool from 'generic-pool';
+import TestFactory from './test-factory.js';
 
-module.exports = {
+const testSuite = {
   name: 'generic-pool',
   run: runTest,
   clear: clearPool,
 };
+
+export default testSuite;
 
 let pool;
 

@@ -1,12 +1,14 @@
-const assert = require('assert');
-const { createPool } = require('lightning-pool');
-const TestFactory = require('./TestFactory.js');
+import assert from 'node:assert';
+import { createPool } from 'lightning-pool';
+import TestFactory from './test-factory.js';
 
-module.exports = {
+const testSuite = {
   name: 'lightning-pool',
   run: runTest,
   clear: clearPool,
 };
+
+export default testSuite;
 
 let pool;
 

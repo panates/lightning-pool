@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-const lightningPoolTest = require('./lightning-pool');
-const genericPoolTest = require('./generic-pool');
-const promisify = require('putil-promisify');
+import promisify from 'putil-promisify';
+import genericPoolTest from './generic-pool.js';
+import lightningPoolTest from './lightning-pool.js';
 
 const testLoops = 2;
 let testId = 0;

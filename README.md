@@ -54,6 +54,8 @@ const pool = new Pool(factory, {
     minIdle: 2  // minimum idle resources
 });
 
+pool.start();
+
 /**
  * Step 3 - Use pool in your code to acquire/release resources
  */

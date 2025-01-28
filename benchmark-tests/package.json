@@ -8,8 +8,10 @@
   ],
   "license": "MIT",
   "private": true,
+  "type": "module",
   "dependencies": {
     "generic-pool": "^3.7.1",
+    "lightning-pool": "latest",
     "putil-promisify": "^1.7.2",
     "putil-waterfall": "^2.1.1"
   },
