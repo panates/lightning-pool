@@ -20,7 +20,7 @@ export interface PoolFactory<T = any> {
 
   reset?(resource: T): Promise<void> | void;
 
-  validate?(resource: T): Promise<void> | void;
+  validate?(resource: T): Promise<void | boolean> | void;
 }
 
 export interface PoolConfiguration {

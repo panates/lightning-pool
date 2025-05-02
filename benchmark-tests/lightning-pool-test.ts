@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import { createPool } from 'lightning-pool';
-import TestFactory from './test-factory.js';
+import { TestFactory } from './test-factory.js';
 
 const testSuite = {
   name: 'lightning-pool',
@@ -16,11 +16,11 @@ function runTest(options, callback) {
   pool = createPool(
     new TestFactory({
       acquireWait: options.acquireWait,
-      usePromise: options.usePromise,
     }),
     {
       max: options.max,
-      maxQueue: options.testCount,
+      maxQueue: Number.MAX_SAFE_INTEGER,
+      houseKeepInterval: 1000,
     },
   );
 

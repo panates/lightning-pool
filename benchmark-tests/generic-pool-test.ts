@@ -1,5 +1,5 @@
 import genericPool from 'generic-pool';
-import TestFactory from './test-factory.js';
+import { TestFactory } from './test-factory.js';
 
 const testSuite = {
   name: 'generic-pool',
@@ -18,7 +18,7 @@ function runTest(options, callback) {
     }),
     {
       max: options.max,
-      maxQueue: options.testCount,
+      maxWaitingClients: Number.MAX_SAFE_INTEGER,
       evictionRunIntervalMillis: 1000,
     },
   );

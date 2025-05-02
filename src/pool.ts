@@ -295,9 +295,9 @@ export class Pool<T = any> extends EventEmitter {
     if (item) {
       /* Validate resource */
       if (this.options.validation && this._factory.validate) {
-        this._itemValidate(item, (err?: unknown) => {
+        this._itemValidate(item, (err?: unknown, result?: boolean) => {
           /* Destroy resource on validation error */
-          if (err) {
+          if (err || result === false) {
             this._itemDestroy(item);
             this.emit('validate-error', err, item.resource);
             this._requestsProcessing--;
@@ -511,7 +511,7 @@ export class Pool<T = any> extends EventEmitter {
       // @ts-ignore
       promisify.await(o, callback);
     } catch (e: any) {
-      if (callback) callback(e);
+      callback?.(e);
     }
   }
 }
