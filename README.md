@@ -2,7 +2,7 @@
 
 [![NPM Version][npm-image]][npm-url]
 [![NPM Downloads][downloads-image]][downloads-url]
-[![CircleCI][circleci-image]][circleci-url]
+[![CI Tests][ci-test-image]][ci-test-url]
 [![Test Coverage][coveralls-image]][coveralls-url]
 
 ## About
@@ -377,8 +377,8 @@ Pool.PoolState (Number):
 
 [npm-image]: https://img.shields.io/npm/v/lightning-pool.svg
 [npm-url]: https://npmjs.org/package/lightning-pool
-[circleci-image]: https://circleci.com/gh/panates/lightning-pool/tree/master.svg?style=shield
-[circleci-url]: https://circleci.com/gh/panates/lightning-pool/tree/master
+[ci-test-image]: https://github.com/panates/lightning-pool/actions/workflows/test.yml/badge.svg
+[ci-test-url]: https://github.com/panates/lightning-pool/actions/workflows/test.yml
 [coveralls-image]: https://img.shields.io/coveralls/panates/lightning-pool/master.svg
 [coveralls-url]: https://coveralls.io/r/panates/lightning-pool
 [downloads-image]: https://img.shields.io/npm/dm/lightning-pool.svg
