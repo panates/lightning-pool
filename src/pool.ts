@@ -2,16 +2,11 @@ import DoublyLinked from 'doublylinked';
 import { EventEmitter } from 'events';
 import promisify from 'putil-promisify';
 import { AbortError } from './abort-error.js';
-import {
-  Callback,
-  PoolConfiguration,
-  PoolFactory,
-  PoolState,
-  ResourceState,
-} from './definitions.js';
+import { PoolState, ResourceState } from './constants.js';
 import { PoolOptions } from './pool-options.js';
 import { PoolRequest } from './pool-request.js';
 import { ResourceItem } from './resource-item.js';
+import type { Callback, PoolConfiguration, PoolFactory } from './types.js';
 
 export class Pool<T = any> extends EventEmitter {
   private readonly _options: PoolOptions;

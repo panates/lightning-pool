@@ -1,5 +1,5 @@
-import { Callback } from './definitions.js';
-import { Pool } from './pool.js';
+import type { Pool } from './pool.js';
+import type { Callback } from './types.js';
 
 function noop() {}
 

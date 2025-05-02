@@ -1,5 +1,5 @@
-import { DoublyLinked } from 'doublylinked';
-import { ResourceState } from './definitions.js';
+import type { DoublyLinked } from 'doublylinked';
+import { ResourceState } from './constants.js';
 
 export class ResourceItem<T> {
   state: ResourceState = ResourceState.IDLE;
