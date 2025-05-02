@@ -1,3 +1,4 @@
+import { expect } from 'expect';
 import { createPool } from '../src/index.js';
 import { TestFactory } from './support/TestFactory.js';
 

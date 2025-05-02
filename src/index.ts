@@ -1,9 +1,10 @@
-import { PoolConfiguration, PoolFactory } from './definitions.js';
 import { Pool } from './pool.js';
+import { PoolConfiguration, PoolFactory } from './types.js';
 
 export * from './abort-error.js';
-export * from './definitions.js';
+export * from './constants.js';
 export * from './pool.js';
+export * from './types.js';
 
 export function createPool<T = any>(
   factory: PoolFactory<T>,

@@ -1,7 +1,7 @@
-/* eslint-disable no-console */
+import * as process from 'node:process';
 import promisify from 'putil-promisify';
-import genericPoolTest from './generic-pool.js';
-import lightningPoolTest from './lightning-pool.js';
+import genericPoolTest from './generic-pool-test.js';
+import lightningPoolTest from './lightning-pool-test.js';
 
 const testLoops = 2;
 let testId = 0;
@@ -13,7 +13,7 @@ async function runTest(options) {
   console.log('- Pool Resources: ', options.max);
   console.log('- Acquiring Time: ', options.acquireWait, 'ms');
   console.log('- Release After: ', options.releaseTime, 'ms');
-  const results = [];
+  const results: number[] = [];
   let started = Date.now();
   let total = 0;
   const runForAvg = function (k, module, cb) {
@@ -81,4 +81,7 @@ async function runAll() {
   process.exit(0);
 }
 
-runAll().catch(e => console.error(e));
+runAll().catch(e => {
+  console.error(e);
+  process.exit(1);
+});

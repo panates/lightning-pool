@@ -2,16 +2,11 @@ import DoublyLinked from 'doublylinked';
 import { EventEmitter } from 'events';
 import promisify from 'putil-promisify';
 import { AbortError } from './abort-error.js';
-import {
-  Callback,
-  PoolConfiguration,
-  PoolFactory,
-  PoolState,
-  ResourceState,
-} from './definitions.js';
+import { PoolState, ResourceState } from './constants.js';
 import { PoolOptions } from './pool-options.js';
 import { PoolRequest } from './pool-request.js';
 import { ResourceItem } from './resource-item.js';
+import type { Callback, PoolConfiguration, PoolFactory } from './types.js';
 
 export class Pool<T = any> extends EventEmitter {
   private readonly _options: PoolOptions;
@@ -295,9 +290,9 @@ export class Pool<T = any> extends EventEmitter {
     if (item) {
       /* Validate resource */
       if (this.options.validation && this._factory.validate) {
-        this._itemValidate(item, (err?: unknown) => {
+        this._itemValidate(item, (err?: unknown, result?: boolean) => {
           /* Destroy resource on validation error */
-          if (err) {
+          if (err || result === false) {
             this._itemDestroy(item);
             this.emit('validate-error', err, item.resource);
             this._requestsProcessing--;
@@ -511,7 +506,7 @@ export class Pool<T = any> extends EventEmitter {
       // @ts-ignore
       promisify.await(o, callback);
     } catch (e: any) {
-      if (callback) callback(e);
+      callback?.(e);
     }
   }
 }

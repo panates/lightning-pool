@@ -1,6 +1,7 @@
 {
   "extends": "@panates/tsconfig/node.json",
   "compilerOptions": {
-    "types": ["node", "jest"]
+    "types": ["node"],
+    "esModuleInterop": true
   }
 }
