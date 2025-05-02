@@ -1,6 +1,14 @@
 ## Changelog
 
-### [v4.11.0](https://github.com/panates/lightning-pool/compare/v4.10.1...v4.11.0) - 
+### [v4.11.1](https://github.com/panates/lightning-pool/compare/v4.11.0...v4.11.1) - 
+
+#### 💬 General Changes
+
+- dev: Fixed circular typing dependencies @Eray Hanoğlu 
+- doc: Fixed ci-test badge @Eray Hanoğlu 
+- dev: Added git+ to repository url @Eray Hanoğlu 
+
+### [v4.11.0](https://github.com/panates/lightning-pool/compare/v4.10.1...v4.11.0) -  2 May 2025 
 
 ### [v4.10.1](https://github.com/panates/lightning-pool/compare/v4.10.0...v4.10.1) -  28 January 2025 
 
