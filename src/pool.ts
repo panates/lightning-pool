@@ -11,8 +11,8 @@ import type { Callback, PoolConfiguration, PoolFactory } from './types.js';
 export class Pool<T = any> extends EventEmitter {
   private readonly _options: PoolOptions;
   private readonly _factory: PoolFactory<T>;
-  private _requestQueue: DoublyLinked<PoolRequest> = new DoublyLinked();
   private _allResources: Map<T, ResourceItem<T>> = new Map();
+  private _requestQueue: DoublyLinked<PoolRequest> = new DoublyLinked();
   private _acquiredResources: DoublyLinked<ResourceItem<T>> =
     new DoublyLinked();
   private _idleResources: DoublyLinked<ResourceItem<T>> = new DoublyLinked();
@@ -104,14 +104,21 @@ export class Pool<T = any> extends EventEmitter {
   }
 
   /**
-   * Starts the pool and begins creating of resources, starts house keeping and any other internal logic.
-   * Note: This method is not need to be called. Pool instance will automatically be started when acquire() method is called
+   * Starts the pool and begins creating of resources, starts the housekeeper and any other internal logic.
+   * Note: This method is not needed to be called. Pool instance will automatically be started when acquire() method is called
    */
   start(): void {
     if (this._state === PoolState.STARTED) return;
-    if (this._state >= PoolState.CLOSING) {
-      throw new Error('Closed pool can not be started again');
+    if (this._state === PoolState.CLOSING) {
+      throw new Error(`Can't start the pool while it is closing`);
     }
+    if (this._allResources.size) this._allResources = new Map();
+    if (this._requestQueue.length) this._requestQueue = new DoublyLinked();
+    if (this._acquiredResources.length)
+      this._acquiredResources = new DoublyLinked();
+    if (this._idleResources.length) this._idleResources = new DoublyLinked();
+    this._creating = 0;
+    this._requestsProcessing = 0;
     this._state = PoolState.STARTED;
     this._setHouseKeep(this.options.houseKeepInterval);
     this._ensureMin();
@@ -165,6 +172,7 @@ export class Pool<T = any> extends EventEmitter {
         }
         if (Date.now() > startTime + terminateWait) {
           clearInterval(this._closeWaitTimer);
+          this._allResources.clear();
           this._closeWaitTimer = undefined;
           this._acquiredResources.forEach(t => this.release(t.resource));
           this.emit('terminate');
