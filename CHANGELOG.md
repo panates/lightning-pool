@@ -1,6 +1,12 @@
 ## Changelog
 
-### [v4.11.1](https://github.com/panates/lightning-pool/compare/v4.11.0...v4.11.1) - 
+### [v4.12.0](https://github.com/panates/lightning-pool/compare/v4.11.1...v4.12.0) - 
+
+#### 🛠 Refactoring and Updates
+
+- refactor: Now any closed pool can be started again @Eray Hanoğlu 
+
+### [v4.11.1](https://github.com/panates/lightning-pool/compare/v4.11.0...v4.11.1) -  2 May 2025 
 
 #### 💬 General Changes
 
