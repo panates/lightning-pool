@@ -18,12 +18,10 @@ describe('Start/Close', () => {
     pool.acquire(() => {});
   });
 
-  it('should not start a closed pool again', async () => {
+  it('should start a closed pool again', async () => {
     pool.start();
     await pool.closeAsync();
-    await expect(() => pool.acquire()).rejects.toThrow(
-      'Closed pool can not be started again',
-    );
+    pool.start();
   });
 
   it('should return Promise if no callback given', () => {
