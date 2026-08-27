@@ -3,6 +3,6 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  "include": ["src"," benchmark-tests"],
+  "include": ["src"],
   "exclude": ["node_modules", "build"]
 }
