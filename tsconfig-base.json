@@ -1,7 +1,9 @@
 {
   "extends": "@panates/tsconfig/node.json",
   "compilerOptions": {
-    "types": ["node"],
-    "esModuleInterop": true
+    "rootDir": "src",
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   }
 }

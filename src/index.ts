@@ -1,5 +1,5 @@
 import { Pool } from './pool.js';
-import { PoolConfiguration, PoolFactory } from './types.js';
+import type { PoolConfiguration, PoolFactory } from './types.js';
 
 export * from './abort-error.js';
 export * from './constants.js';

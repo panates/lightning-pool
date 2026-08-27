@@ -128,10 +128,11 @@ export class Pool<T = any> extends EventEmitter {
   /**
    * Shuts down the pool and destroys all resources.
    */
+  close(): void;
   close(callback?: Callback): void;
-  close(terminateWait: number, callback?: Callback): void;
-  close(force: boolean, callback?: Callback): void;
-  close(arg0?, arg1?): any {
+  close(terminateWait?: number, callback?: Callback): void;
+  close(force?: boolean, callback?: Callback): void;
+  close(arg0?: any, arg1?: any): any {
     let terminateWait = Infinity;
     let callback: Callback;
 
@@ -184,8 +185,8 @@ export class Pool<T = any> extends EventEmitter {
   }
 
   closeAsync(): Promise<void>;
-  closeAsync(terminateWait: number): Promise<void>;
-  closeAsync(force: boolean): Promise<void>;
+  closeAsync(terminateWait?: number): Promise<void>;
+  closeAsync(force?: boolean): Promise<void>;
   closeAsync(arg0?: any): Promise<void> {
     return promisify.fromCallback<void>(cb => this.close(arg0, cb));
   }
