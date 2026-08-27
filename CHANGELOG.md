@@ -1,6 +1,8 @@
 ## Changelog
 
-### [v4.12.0](https://github.com/panates/lightning-pool/compare/v4.11.1...v4.12.0) - 
+### [v4.13.0](https://github.com/panates/lightning-pool/compare/v4.12.0...v4.13.0) - 
+
+### [v4.12.0](https://github.com/panates/lightning-pool/compare/v4.11.1...v4.12.0) -  4 December 2025 
 
 #### 🛠 Refactoring and Updates
 
