@@ -1,7 +1,7 @@
 {
   "name": "lightning-pool",
   "description": "Fastest generic Pool written with TypeScript",
-  "version": "4.13.0",
+  "version": "4.14.0",
   "author": "Panates",
   "license": "MIT",
   "dependencies": {
@@ -14,23 +14,25 @@
     "@panates/eslint-config-ts": "^2.1.6",
     "@panates/tsconfig": "^2.1.6",
     "@swc-node/register": "^1.12.1",
-    "@swc/core": "^1.16.1",
+    "@swc/core": "^1.16.2",
     "@swc/helpers": "^0.5.23",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^26.4.0",
-    "auto-changelog": "^2.6.0",
+    "@types/node": "^26.5.0",
+    "auto-changelog": "^2.6.1",
     "c8": "^12.0.0",
     "dotenv": "^17.4.2",
-    "expect": "^30.4.1",
+    "expect": "^30.5.1",
     "generic-pool": "^3.9.0",
-    "globals": "^17.11.0",
+    "globals": "^17.12.0",
     "madge": "^8.0.0",
-    "mocha": "^11.8.0",
+    "mocha": "^12.0.0",
     "npm-run-path": "^6.0.0",
     "prettier": "^3.9.6",
     "rimraf": "^6.1.3",
+    "tinybench": "^6.1.6",
     "ts-cleanup": "^1.4.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "yargs": "^18.1.0"
   },
   "scripts": {
     "compile": "tsc --noEmit",
@@ -49,7 +51,9 @@
     "citest": "c8 mocha",
     "qc": "npm run lint && npm run check",
     "version": "auto-changelog -p && git add CHANGELOG.md",
-    "benchmark": "TS_NODE_PROJECT=./benchmark-tests/tsconfig.json  node --import @swc-node/register/esm-register ./benchmark-tests/index.ts"
+    "bench": "node --import ./benchmark/env.mjs --import @swc-node/register/esm-register benchmark/cli.ts",
+    "bench:report": "node --import ./benchmark/env.mjs --import @swc-node/register/esm-register benchmark/report/render-markdown.ts",
+    "graph": "graphify update ."
   },
   "type": "module",
   "module": "./index.js",
