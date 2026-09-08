@@ -1,6 +1,21 @@
 ## Changelog
 
-### [v4.13.0](https://github.com/panates/lightning-pool/compare/v4.12.0...v4.13.0) - 
+### [v4.14.0](https://github.com/panates/lightning-pool/compare/v4.13.0...v4.14.0) - 
+
+#### 🚀 New Features
+
+- feat: Replace benchmark-tests with a proper benchmark suite @Eray Hanoğlu 
+
+#### 🪲 Fixes
+
+- fix: Correct release/close/ensureMin bugs and cut hot-path allocations in Pool @Eray Hanoğlu 
+
+#### 📖 Documentation Changes
+
+- docs: Split API reference into doc/API.md, add generated doc/BENCHMARKS.md @Eray Hanoğlu 
+- docs: Add CLAUDE.md with graphify usage guidelines @Eray Hanoğlu 
+
+### [v4.13.0](https://github.com/panates/lightning-pool/compare/v4.12.0...v4.13.0) -  27 August 2026 
 
 ### [v4.12.0](https://github.com/panates/lightning-pool/compare/v4.11.1...v4.12.0) -  4 December 2025 
 
