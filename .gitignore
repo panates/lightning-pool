@@ -3,6 +3,12 @@
 /build
 node_modules
 coverage
+*.tsbuildinfo
+graphify-out
+.claude
+
+# benchmark raw results (regenerate with `npm run bench`)
+/benchmark/results
 
 # environment variables
 .env

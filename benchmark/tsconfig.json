@@ -2,9 +2,7 @@
   "extends": "../tsconfig-base.json",
   "include": ["**/*.ts"],
   "compilerOptions": {
-    "baseUrl": "./",
-    "paths": {
-      "lightning-pool": ["../src/index.js"]
-    }
+    "rootDir": "..",
+    "baseUrl": "."
   }
 }
