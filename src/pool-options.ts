@@ -140,9 +140,16 @@ export class PoolOptions extends EventEmitter {
 
   assign(values: PoolConfiguration | PoolOptions): void {
     const proto = Object.getPrototypeOf(this);
-    for (const k of Object.keys(values)) {
+    // A PoolOptions instance only owns underscored private fields, so its
+    // public getter/setter names must be read from the canonical key list.
+    const keys =
+      values instanceof PoolOptions
+        ? Object.keys(defaultValues)
+        : Object.keys(values);
+    for (const k of keys) {
       const desc = Object.getOwnPropertyDescriptor(proto, k);
-      if (desc && desc.set) this[k] = values[k];
+      const val = (values as any)[k];
+      if (desc && desc.set && val !== undefined) this[k] = val;
     }
   }
 }

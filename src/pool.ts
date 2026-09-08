@@ -8,6 +8,26 @@ import { PoolRequest } from './pool-request.js';
 import { ResourceItem } from './resource-item.js';
 import type { Callback, PoolConfiguration, PoolFactory } from './types.js';
 
+/**
+ * Like putil-promisify's `promisify.await()`, but attaches both handlers to
+ * the original promise via `.then(onFulfilled, onRejected)` instead of
+ * chaining a `.catch()` off a second promise `.then()` returns - one fewer
+ * Promise allocated per call on a path (create/destroy/reset/validate) that
+ * every acquire/release goes through. Mirrors promisify.await's own loose
+ * `(x: any, callback: (error?: Error, value?: T) => void)` signature.
+ */
+function awaitResult<T>(
+  value: unknown,
+  callback?: (error?: Error, value?: T) => void,
+): void {
+  if (value && typeof (value as any).then === 'function') {
+    (value as Promise<T>).then(
+      (v: T) => callback && callback(undefined, v),
+      (e: unknown) => callback && callback(e as Error),
+    );
+  } else if (callback) callback(undefined, value as T);
+}
+
 export class Pool<T = any> extends EventEmitter {
   private readonly _options: PoolOptions;
   private readonly _factory: PoolFactory<T>;
@@ -157,7 +177,15 @@ export class Pool<T = any> extends EventEmitter {
     this.emit('closing');
     if (this._houseKeepTimer) clearTimeout(this._houseKeepTimer);
     this._state = PoolState.CLOSING;
-    this._requestQueue.forEach(t => t.stopTimout());
+    const closingError = new Error('Pool is closing');
+    this._requestQueue.forEach(t => {
+      t.stopTimout();
+      try {
+        t.callback(closingError);
+      } catch {
+        // ignored
+      }
+    });
     this._requestQueue = new DoublyLinked();
     this._requestsProcessing = 0;
 
@@ -217,7 +245,7 @@ export class Pool<T = any> extends EventEmitter {
     const item = this._allResources.get(resource);
     if (item && item.state !== ResourceState.IDLE) {
       this._itemSetIdle(item, callback);
-    }
+    } else if (callback) callback();
     this._processNextRequest();
   }
 
@@ -284,11 +312,18 @@ export class Pool<T = any> extends EventEmitter {
             this._itemDestroy(item);
             return;
           }
+          if (request.timedOut) {
+            /* Request already failed with a timeout error; return the
+             * resource to the idle pool instead of handing it to an
+             * abandoned caller. */
+            this._itemSetIdle(item);
+            return;
+          }
           this._itemSetAcquired(item);
           this._ensureMin();
           request.callback(undefined, item.resource);
           this.emit('acquire', item.resource);
-        } else request.callback(err);
+        } else if (!request.timedOut) request.callback(err);
       } catch {
         // ignored
       }
@@ -335,7 +370,6 @@ export class Pool<T = any> extends EventEmitter {
     this._creating++;
 
     const handleCallback = (err?: Error, obj?: T) => {
-      if (request && request.timedOut) return;
       if (err || !obj) {
         tries++;
         this.emit('error', err, {
@@ -343,7 +377,9 @@ export class Pool<T = any> extends EventEmitter {
           tries,
           maxRetries: this.options.acquireMaxRetries,
         });
-        if (err instanceof AbortError || tries >= maxRetries) {
+        /* Stop retrying for a request that already timed out */
+        const abandoned = !!(request && request.timedOut);
+        if (abandoned || err instanceof AbortError || tries >= maxRetries) {
           this._creating--;
           return callback && callback(err);
         }
@@ -372,7 +408,7 @@ export class Pool<T = any> extends EventEmitter {
         if (!o) {
           return handleCallback(new AbortError('Factory returned no resource'));
         }
-        promisify.await(o, handleCallback);
+        awaitResult(o, handleCallback);
       } catch (e: any) {
         handleCallback(e);
       }
@@ -408,7 +444,7 @@ export class Pool<T = any> extends EventEmitter {
     }
     if (isClosing) {
       /* Check again 5 ms later */
-      if (this._allResources.size) return;
+      if (this._allResources.size || this._creating) return;
       clearInterval(this._houseKeepTimer);
       this._state = PoolState.CLOSED;
       this._requestsProcessing = 0;
@@ -417,6 +453,11 @@ export class Pool<T = any> extends EventEmitter {
   }
 
   private _ensureMin(): void {
+    // Common case (min/minIdle both unset): the scheduled tick below would
+    // always compute k <= 0 and do nothing, so skip the nextTick() and its
+    // closure allocation entirely rather than paying for a wasted microtask
+    // on every single acquire().
+    if (this.options.min <= 0 && this.options.minIdle <= 0) return;
     process.nextTick(() => {
       let k =
         Math.max(
@@ -480,7 +521,7 @@ export class Pool<T = any> extends EventEmitter {
     if (isAcquired && this._factory.reset) {
       try {
         const o = this._factory.reset(item.resource);
-        promisify.await(o, handleCallback);
+        awaitResult(o, handleCallback);
       } catch (e: any) {
         handleCallback(e);
       }
@@ -500,7 +541,7 @@ export class Pool<T = any> extends EventEmitter {
 
     try {
       const o = this._factory.destroy(item.resource);
-      promisify.await(o, handleCallback);
+      awaitResult(o, handleCallback);
     } catch (e: any) {
       handleCallback(e);
     } finally {
@@ -512,8 +553,7 @@ export class Pool<T = any> extends EventEmitter {
     item.state = ResourceState.VALIDATION;
     try {
       const o = this._factory.validate?.(item.resource);
-      // @ts-ignore
-      promisify.await(o, callback);
+      awaitResult(o, callback);
     } catch (e: any) {
       callback?.(e);
     }
