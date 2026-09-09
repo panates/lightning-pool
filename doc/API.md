@@ -1,5 +1,22 @@
 # lightning-pool API Reference
 
+<!--
+doc-sync-marker:
+  verified_version: 4.14.0
+  verified_commit: ba8a0f739b8c049632e4c95013fc83a421d9fc91
+  source_paths: src/pool.ts, src/pool-options.ts, src/pool-request.ts, src/resource-item.ts, src/types.ts, src/constants.ts, src/index.ts
+
+This doc was last read against the source at the commit/version above. In a
+future session, before trusting or extending this reference:
+  1. Check the repo's current commit: `git rev-parse HEAD`.
+  2. If it differs from verified_commit, run
+     `git log --oneline <verified_commit>..HEAD -- <source_paths>` (space-
+     separated, not comma-separated) to see what changed in the files this
+     doc describes.
+  3. Update the sections below to match, then update verified_version and
+     verified_commit here to the new HEAD before committing.
+-->
+
 For an overview, installation, and a quick example, see the [README](../README.md).
 
 ## Creating a `Pool` instance
