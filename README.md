@@ -92,7 +92,7 @@ emitted events, and the `PoolState`/`ResourceState` enums.
 [npm-url]: https://npmjs.org/package/lightning-pool
 [ci-test-image]: https://github.com/panates/lightning-pool/actions/workflows/test.yml/badge.svg
 [ci-test-url]: https://github.com/panates/lightning-pool/actions/workflows/test.yml
-[coveralls-image]: https://img.shields.io/coveralls/panates/lightning-pool/master.svg
+[coveralls-image]: https://img.shields.io/coveralls/panates/lightning-pool/dev.svg
 [coveralls-url]: https://coveralls.io/r/panates/lightning-pool
 [downloads-image]: https://img.shields.io/npm/dm/lightning-pool.svg
 [downloads-url]: https://npmjs.org/package/lightning-pool
