@@ -1,6 +1,17 @@
 ## Changelog
 
-### [v4.14.0](https://github.com/panates/lightning-pool/compare/v4.13.0...v4.14.0) - 
+### [v4.14.1](https://github.com/panates/lightning-pool/compare/v4.14.0...v4.14.1) - 
+
+#### 🪲 Fixes
+
+- fix: point coverage badge at dev instead of the stale master record @Eray Hanoğlu 
+
+#### 📖 Documentation Changes
+
+- docs: Add TSDoc coverage across src/ @Eray Hanoğlu 
+- docs: Add a doc-sync-marker convention for hand-written reference docs @Eray Hanoğlu 
+
+### [v4.14.0](https://github.com/panates/lightning-pool/compare/v4.13.0...v4.14.0) -  8 September 2026 
 
 #### 🚀 New Features
 
