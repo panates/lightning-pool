@@ -16,6 +16,8 @@ concurrency:
 
 jobs:
   qc:
+    permissions:
+      contents: read
     uses: panates/github-actions/.github/workflows/node-qc.yaml@v1
     secrets:
       PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}

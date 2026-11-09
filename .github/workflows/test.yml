@@ -22,6 +22,8 @@ jobs:
   # Job: Test
   # ***********************************
   test:
+    permissions:
+      contents: read
     name: 'Tests'
     if: >
       github.event_name == 'workflow_dispatch' ||
