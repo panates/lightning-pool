@@ -24,7 +24,7 @@ resource (`benchmark/resource.ts`).
 pnpm run bench
 
 # Fast iteration while developing a scenario/adapter
-pnpm run bench -- --scenario=queue-contention --lib=lightning-pool --repeats=1
+pnpm run bench --scenario=queue-contention --lib=lightning-pool --repeats=1
 
 # Regenerate docs/BENCHMARKS.md from existing benchmark/results/*.json
 # without re-running the matrix (pnpm run bench already does this automatically)
