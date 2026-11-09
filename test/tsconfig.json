@@ -2,9 +2,8 @@
   "extends": "../tsconfig-base.json",
   "include": ["**/*.ts"],
   "compilerOptions": {
+    "rootDir": "..",
     "types": ["node", "mocha"],
-    "sourceMap": true,
-    "baseUrl": "./",
     "paths": {
       "lightning-pool": ["../src/index.js"]
     }

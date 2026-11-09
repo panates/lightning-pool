@@ -20,7 +20,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BENCHMARK_DIR = path.resolve(__dirname, '..');
 const REPO_ROOT = path.resolve(BENCHMARK_DIR, '..');
 const RESULTS_DIR = path.join(BENCHMARK_DIR, 'results');
-const OUTPUT_PATH = path.join(REPO_ROOT, 'doc', 'BENCHMARKS.md');
+const OUTPUT_PATH = path.join(REPO_ROOT, 'docs', 'BENCHMARKS.md');
 
 const LIB_LABELS: Record<LibId, string> = {
   'lightning-pool': 'lightning-pool',
@@ -77,7 +77,7 @@ function renderIndex(markdown: string): string {
 function renderMethodology(): string {
   return `## Methodology
 
-These numbers are produced by \`benchmark/\` (run via \`npm run bench\`), comparing lightning-pool against [generic-pool](https://github.com/coopernurse/node-pool) driving an identical simulated resource (see \`benchmark/resource.ts\`) - no real database or socket involved, so the numbers isolate each pool's own bookkeeping and scheduling overhead rather than any backend's latency. See [benchmark/README.md](../benchmark/README.md) for how to reproduce them.
+These numbers are produced by \`benchmark/\` (run via \`pnpm run bench\`), comparing lightning-pool against [generic-pool](https://github.com/coopernurse/node-pool) driving an identical simulated resource (see \`benchmark/resource.ts\`) - no real database or socket involved, so the numbers isolate each pool's own bookkeeping and scheduling overhead rather than any backend's latency. See [benchmark/README.md](../benchmark/README.md) for how to reproduce them.
 
 Each scenario is implemented once per library, using that library's own idiomatic API (lightning-pool's \`acquire\`/\`releaseAsync\`/\`destroyAsync\` vs. generic-pool's \`acquire\`/\`release\`/\`destroy\`), while both read the exact same pool-size/concurrency knobs from \`benchmark/scenarios/*.ts\`. Only the pooling mechanism varies, not the workload.
 
@@ -85,7 +85,7 @@ Each \`(library, scenario)\` pair runs in its own child process, spawned sequent
 
 Each table also reports **GC (ms/op)** and **Peak Heap (KB)** - allocation pressure, not just wall-clock speed. GC (ms/op) is the total time spent in garbage collection during the run (observed via \`node:perf_hooks\`, every GC pause regardless of cause), divided by the number of timed samples. Peak Heap (KB) isn't a per-call figure: each worker process is started with \`--expose-gc\`, forces a clean GC immediately before the run to get a baseline \`heapUsed\`, then tracks the highest \`heapUsed\` seen at any point during the run - the most the heap ever grew above that baseline while running the whole scenario. Both include tinybench's own warmup iterations (it doesn't expose a hook at the boundary between warmup and the timed run).
 
-By default every simulated resource's \`create()\`/\`destroy()\` resolves immediately (0ms) so the numbers measure pure pool overhead. Set \`BENCH_CREATE_DELAY_MS\`/\`BENCH_DESTROY_DELAY_MS\` to approximate a real backend's connection cost instead: \`BENCH_CREATE_DELAY_MS=5 npm run bench\`.
+By default every simulated resource's \`create()\`/\`destroy()\` resolves immediately (0ms) so the numbers measure pure pool overhead. Set \`BENCH_CREATE_DELAY_MS\`/\`BENCH_DESTROY_DELAY_MS\` to approximate a real backend's connection cost instead: \`BENCH_CREATE_DELAY_MS=5 pnpm run bench\`.
 
 **Why GC/heap sampling needs a forced yield here.** Neither scenario does real I/O, so a pool whose hot path resolves entirely through chained \`Promise\`s (no timer/socket in between) can run its whole scenario without Node's event loop ever reaching a macrotask turn - and both \`node:perf_hooks\`' \`'gc'\` performance entries and a plain polling timer are only delivered/fire on such a turn. Left unpatched, this reads back as \`gcCount=0\`/\`peakHeap=0\` for whichever library's task happens to chain purely through microtasks, indistinguishable from genuinely zero allocation (confirmed directly: a raw, uninstrumented 2,000,000-iteration acquire/release loop reports zero for *both* libraries here, even though real GCs are demonstrably happening - inserting a periodic \`setImmediate\` yield in that same raw loop immediately surfaces hundreds of real GC events and tens of MB of real heap growth). \`benchmark/runner/worker.ts\`'s \`installPeriodicYield()\` fixes this at the source: it patches \`bench.add()\` to insert a real \`setImmediate\` yield (plus a heap sample) into the task's \`afterEach\` hook every 250 samples. tinybench's own time budget only accumulates the timed \`fn()\` duration, not hook time (see its \`Task\` internals), so this yield doesn't shrink the sample count or skew Mean/p75/p99/ops-per-sec - it only makes the whole run take a little longer in real wall-clock time, which is what makes GC (ms/op) and Peak Heap (KB) trustworthy enough to compare between libraries at all.
 
@@ -317,10 +317,10 @@ function renderScenarioTable(
 }
 
 /**
- * Regenerates doc/BENCHMARKS.md from whatever is currently in
+ * Regenerates docs/BENCHMARKS.md from whatever is currently in
  * benchmark/results/*.json. Called automatically by the orchestrator at the
- * end of `npm run bench`, and importable/callable standalone via
- * `npm run bench:report` (see the CLI entry point at the bottom of this
+ * end of `pnpm run bench`, and importable/callable standalone via
+ * `pnpm run bench:report` (see the CLI entry point at the bottom of this
  * file) to regenerate the doc from existing results without re-running the
  * whole matrix.
  */
@@ -328,7 +328,7 @@ export function generateBenchmarksMarkdown(): void {
   const results = readResults(RESULTS_DIR);
   if (results.length === 0) {
     throw new Error(
-      'No results found in benchmark/results/. Run `npm run bench` first.',
+      'No results found in benchmark/results/. Run `pnpm run bench` first.',
     );
   }
 
@@ -343,7 +343,7 @@ export function generateBenchmarksMarkdown(): void {
   const sections: string[] = [
     '# lightning-pool Benchmarks',
     '',
-    '_Generated automatically by `npm run bench` (or standalone via `npm run bench:report`). Do not hand-edit — re-run one of those instead._',
+    '_Generated automatically by `pnpm run bench` (or standalone via `pnpm run bench:report`). Do not hand-edit — re-run one of those instead._',
     '',
     renderMethodology(),
     renderEnvironment(libVersions),
@@ -359,7 +359,7 @@ export function generateBenchmarksMarkdown(): void {
     '## Raw data',
     '',
     'Backing raw data for the numbers above lives in `benchmark/results/*.json` ' +
-      '(gitignored; regenerate with `npm run bench`).',
+      '(gitignored; regenerate with `pnpm run bench`).',
     '',
   );
 
@@ -367,7 +367,7 @@ export function generateBenchmarksMarkdown(): void {
   const titleBlock = [
     '# lightning-pool Benchmarks',
     '',
-    '_Generated automatically by `npm run bench` (or standalone via `npm run bench:report`). Do not hand-edit — re-run one of those instead._',
+    '_Generated automatically by `pnpm run bench` (or standalone via `pnpm run bench:report`). Do not hand-edit — re-run one of those instead._',
     '',
   ].join('\n');
   const output =
@@ -377,10 +377,10 @@ export function generateBenchmarksMarkdown(): void {
   console.log(`Wrote ${path.relative(REPO_ROOT, OUTPUT_PATH)}`);
 }
 
-// Only auto-run when this file is the process entry point (`npm run
+// Only auto-run when this file is the process entry point (`pnpm run
 // bench:report`), not when generateBenchmarksMarkdown() is imported and
 // called explicitly (e.g. by runner/orchestrator.ts at the end of a
-// `npm run bench` run).
+// `pnpm run bench` run).
 if (import.meta.url === `file://${process.argv[1]}`) {
   generateBenchmarksMarkdown();
 }

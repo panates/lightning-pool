@@ -1,4 +1,4 @@
-import { PoolFactory } from '../../src/index.js';
+import type { PoolFactory } from '../../src/index.js';
 
 export class TestResource {
   resetCount = 0;

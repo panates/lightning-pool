@@ -4,13 +4,13 @@ import globals from 'globals';
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   {
-    ignores: ['build/**/*', 'node_modules/**/*'],
+    ignores: ['node_modules/**/*', 'build/**/*'],
   },
   ...panatesEslint.configs.node,
   {
     languageOptions: {
       globals: {
-        ...globals.jest,
+        ...globals.mocha,
       },
     },
   },

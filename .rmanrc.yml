@@ -1,0 +1,5 @@
+extends: '@panates/rman-preset'
+
+# Install, sync the lockfile and publish with pnpm.
+packageManager:
+  node: pnpm

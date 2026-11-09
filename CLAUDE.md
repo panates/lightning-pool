@@ -10,7 +10,7 @@ Rules:
 
 ## Documentation sync markers
 
-Hand-written reference docs (e.g. `doc/API.md`) that describe specific source files must carry a `doc-sync-marker`
+Hand-written reference docs (e.g. `docs/API.md`) that describe specific source files must carry a `doc-sync-marker`
 HTML comment near the top, recording the version/commit they were last verified against and which source paths they
 describe:
 
@@ -31,6 +31,6 @@ Before trusting or editing such a doc in a session:
    HEAD before committing.
 
 This keeps hand-written docs from silently drifting out of sync with the code they document (this happened once
-already - `doc/API.md` was rewritten from a README section that had drifted from the actual `Pool` API for years).
-Auto-generated docs (e.g. `doc/BENCHMARKS.md`) don't need this - they're regenerated wholesale by `npm run bench`/
-`npm run bench:report`, never hand-edited.
+already - `docs/API.md` was rewritten from a README section that had drifted from the actual `Pool` API for years).
+Auto-generated docs (e.g. `docs/BENCHMARKS.md`) don't need this - they're regenerated wholesale by `pnpm run bench`/
+`pnpm run bench:report`, never hand-edited.

@@ -9,7 +9,7 @@
 
 High performance resource pool written with TypeScript.
 
- - A fast Resource Pool implementation for JavaScript - see [doc/BENCHMARKS.md](doc/BENCHMARKS.md) for the numbers against [generic-pool](https://github.com/coopernurse/node-pool), or [benchmark/README.md](benchmark/README.md) to reproduce them yourself
+ - A fast Resource Pool implementation for JavaScript - see [docs/BENCHMARKS.md](docs/BENCHMARKS.md) for the numbers against [generic-pool](https://github.com/coopernurse/node-pool), or [benchmark/README.md](benchmark/README.md) to reproduce them yourself
  - Advanced configuration options, suits for enterprise level applications
  - Configuration can be changed while pool running
  - Promise based factory supported
@@ -78,7 +78,7 @@ await pool.close(5000);
 
 ## Documentation
 
-See [doc/API.md](doc/API.md) for the full API reference - factory/options shape, every method and property,
+See [docs/API.md](docs/API.md) for the full API reference - factory/options shape, every method and property,
 emitted events, and the `PoolState`/`ResourceState` enums.
 
 ## Node Compatibility

@@ -1,5 +1,6 @@
 {
   "name": "lightning-pool",
+  "private": true,
   "description": "Fastest generic Pool written with TypeScript",
   "version": "4.14.1",
   "author": "Panates",
@@ -7,50 +8,35 @@
   "dependencies": {
     "doublylinked": "^2.5.6",
     "putil-promisify": "^1.10.1",
-    "tslib": "^2.8.1"
+    "tslib": "^2.9.1"
   },
   "devDependencies": {
-    "@panates/eslint-config": "^2.1.6",
-    "@panates/eslint-config-ts": "^2.1.6",
-    "@panates/tsconfig": "^2.1.6",
+    "@panates/eslint-config": "^2.3.5",
+    "@panates/eslint-config-ts": "^2.3.5",
+    "@panates/rman-preset": "^2.2.2",
+    "@panates/tsconfig": "^2.1.8",
     "@swc-node/register": "^1.12.1",
-    "@swc/core": "^1.16.2",
-    "@swc/helpers": "^0.5.23",
+    "@swc/core": "^1.16.22",
+    "@swc/helpers": "^0.5.24",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^26.5.0",
-    "auto-changelog": "^2.6.1",
+    "@types/node": "^26.6.6",
     "c8": "^12.0.0",
-    "dotenv": "^17.4.2",
-    "expect": "^30.5.1",
+    "expect": "^30.5.2",
     "generic-pool": "^3.9.0",
-    "globals": "^17.12.0",
-    "madge": "^8.0.0",
-    "mocha": "^12.0.0",
+    "globals": "^17.14.0",
+    "mocha": "^12.0.3",
     "npm-run-path": "^6.0.0",
-    "prettier": "^3.9.6",
-    "rimraf": "^6.1.3",
-    "tinybench": "^6.1.6",
-    "ts-cleanup": "^1.4.1",
-    "typescript": "^5.9.3",
-    "yargs": "^18.1.0"
+    "tinybench": "^6.2.3",
+    "typescript": "^6.0.3",
+    "yargs": "^18.2.0"
   },
   "scripts": {
-    "compile": "tsc --noEmit",
-    "clean": "npm run clean:src && npm run clean:dist",
-    "clean:dist": "rimraf build coverage",
-    "clean:src": "ts-cleanup -s src --all | ts-cleanup -s test",
-    "prebuild": "npm run clean:dist && npm run lint",
-    "build": "tsc -b tsconfig-build.json",
-    "postbuild": "node ./support/postbuild.cjs && cp LICENSE README.md CHANGELOG.md ./build",
-    "lint": "eslint . --max-warnings=0",
-    "lint:fix": "eslint . --max-warnings=0 --fix",
-    "format": "prettier . --write --log-level=warn",
-    "check": "madge --circular src/**",
     "test": "mocha",
-    "precitest": "rimraf coverage",
     "citest": "c8 mocha",
-    "qc": "npm run lint && npm run check",
-    "version": "auto-changelog -p && git add CHANGELOG.md",
+    "precitest": "rman clean",
+    "lint": "rman lint",
+    "check": "rman check",
+    "format": "rman format",
     "bench": "node --import ./benchmark/env.mjs --import @swc-node/register/esm-register benchmark/cli.ts",
     "bench:report": "node --import ./benchmark/env.mjs --import @swc-node/register/esm-register benchmark/report/render-markdown.ts",
     "graph": "graphify update ."
@@ -64,6 +50,9 @@
       "default": "./index.js"
     },
     "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=22"
   },
   "repository": {
     "type": "git",

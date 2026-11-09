@@ -1,16 +1,19 @@
 name: Test
 on:
+  # release.yml runs the tests before a release
   workflow_call:
-    secrets:
-      PERSONAL_ACCESS_TOKEN:
 
   # Can be run manually
   workflow_dispatch:
 
-  # on git push
+  # Every push but to main, which gets its tests from release.yml
   push:
-    branches:
-      - dev
+    branches-ignore:
+      - main
+
+# This workflow only reads the repository
+permissions:
+  contents: read
 
 # Only one run per branch at a time
 concurrency:
@@ -18,46 +21,41 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # ***********************************
-  # Job: Test
-  # ***********************************
   test:
-    name: 'Tests'
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      (
-        github.event_name == 'push' &&
-        !(
-          contains(github.event.head_commit.message, 'no-test') ||
-          ( 
-            startsWith(github.event.head_commit.message, 'Merge pull request') &&
-            contains(github.event.head_commit.message, '/dev')
-          )
-        )
-      )
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    name: Node v${{ matrix.node }}
+    # Every Node.js release line from the engines.node floor (>=22) up
     strategy:
       fail-fast: false
       matrix:
-        node: [ '18', '20', '22', '23' ]
-
+        node: ['22', '24', '26']
+    # A push whose commit message says no-test skips the tests
+    if: >
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, 'no-test')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
+      # Checks the repository out, installs what the lockfile pins and puts rman on the PATH
       - name: Setup Environment
-        uses: panates/gh-setup-node@v1
+        uses: panates/gh-setup-node@v2
         with:
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          node-version: ${{ matrix.node }}
+          rman-version: '2'
+          install: 'ci'
 
-      - name: Apply tests
-        run: |
-          npm run qc
-          npm run citest
-        env:
-          NODE_OPTIONS: "--max_old_space_size=4096"
+      - name: Run linter test
+        run: rman lint
 
+      - name: Run circular dependency test
+        run: rman check
+
+      - name: Run unit tests
+        run: pnpm run citest
+
+      # The coverage badge reads Coveralls
       - name: Send coverage to Coveralls
         uses: coverallsapp/github-action@v2
-        # Run only once
-        if: ${{ matrix.node == '22' }}
+        # Once per run
+        if: ${{ matrix.node == '24' }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -425,7 +425,7 @@ export class Pool<T = any> extends EventEmitter {
    * misbehaving listener on, say, `'acquire'` can't take down the internal
    * code path that just emitted it.
    *
-   * @param event - Event name. See the class-level events list in `doc/API.md`
+   * @param event - Event name. See the class-level events list in `docs/API.md`
    * (`start`, `closing`, `close`, `terminate`, `create`, `error`, `acquire`,
    * `return`, `destroy`, `destroy-error`, `validate-error`, `request-timeout`).
    * @param args - Arguments passed to each listener.
