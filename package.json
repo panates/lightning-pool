@@ -2,7 +2,7 @@
   "name": "lightning-pool",
   "private": true,
   "description": "Fastest generic Pool written with TypeScript",
-  "version": "4.14.1",
+  "version": "4.14.2",
   "author": "Panates",
   "license": "MIT",
   "dependencies": {

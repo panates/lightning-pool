@@ -1,3 +1,44 @@
+# Changelog
+
+<!-- rman:documented-up-to 40f7e7d6533a648eec2638011eafd8dde8a75e15 -->
+
+## v4.14.2 (2026-11-09)
+
+### 🐛 Bug Fixes
+
+- Remove a timed-out acquire request from the queue at once (7b91cac)
+
+### 📚 Documentation
+
+- Move doc/ to docs/ (dd7985a)
+- Add CODE_OF_CONDUCT.md from the template (1626918)
+- Pass bench flags without -- under pnpm (e3e0407)
+- State Node.js 22 as the minimum and list the contributors (5d4b608)
+
+### 🧪 Tests
+
+- Fix the type check of test/ (87b94e1)
+
+### 📦 Build System
+
+- Move to pnpm and rman (ee2cbe8)
+- Upgrade dependencies (0b9cdbf)
+- Remove the unused dotenv dev dependency (bf41bf0)
+- Pin pnpm 12.10.1 in packageManager (6f80120)
+
+### 🤖 Continuous Integration
+
+- Declare per-job permissions and require main pull requests from dev (603fa3f)
+- Move test.yml and release.yml to the rman templates (47e0aac)
+
+### 🧹 Chores
+
+- Add SECURITY.md and a shared Claude Code settings file (7b55c05)
+- Mark the source package.json private (45ed056)
+- Align lint, TypeScript and ignore files with the templates (0c3d829)
+
+---
+
 ## Changelog
 
 ### [v4.14.1](https://github.com/panates/lightning-pool/compare/v4.14.0...v4.14.1) - 
