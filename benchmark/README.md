@@ -4,7 +4,7 @@ Compares lightning-pool against [generic-pool](https://github.com/coopernurse/no
 driving an identical simulated resource, so the numbers isolate each pool's
 own bookkeeping/scheduling overhead rather than any real backend's latency.
 For the methodology and the latest generated numbers, see
-[`doc/BENCHMARKS.md`](../doc/BENCHMARKS.md) - it is regenerated automatically
+[`docs/BENCHMARKS.md`](../docs/BENCHMARKS.md) - it is regenerated automatically
 at the end of every `npm run bench` (or standalone via `npm run bench:report`),
 not hand-edited.
 
@@ -26,7 +26,7 @@ npm run bench
 # Fast iteration while developing a scenario/adapter
 npm run bench -- --scenario=queue-contention --lib=lightning-pool --repeats=1
 
-# Regenerate doc/BENCHMARKS.md from existing benchmark/results/*.json
+# Regenerate docs/BENCHMARKS.md from existing benchmark/results/*.json
 # without re-running the matrix (npm run bench already does this automatically)
 npm run bench:report
 ```
@@ -40,7 +40,7 @@ Library ids: `lightning-pool`, `generic-pool`.
 Each `(library, scenario)` pair runs in its own child process, spawned one at
 a time - never in parallel - so CPU contention on your machine doesn't skew
 the numbers. Results land in `benchmark/results/*.json` (gitignored raw data
-backing whatever `doc/BENCHMARKS.md` currently reports).
+backing whatever `docs/BENCHMARKS.md` currently reports).
 
 ## Rigor vs. speed
 

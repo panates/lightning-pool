@@ -20,7 +20,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BENCHMARK_DIR = path.resolve(__dirname, '..');
 const REPO_ROOT = path.resolve(BENCHMARK_DIR, '..');
 const RESULTS_DIR = path.join(BENCHMARK_DIR, 'results');
-const OUTPUT_PATH = path.join(REPO_ROOT, 'doc', 'BENCHMARKS.md');
+const OUTPUT_PATH = path.join(REPO_ROOT, 'docs', 'BENCHMARKS.md');
 
 const LIB_LABELS: Record<LibId, string> = {
   'lightning-pool': 'lightning-pool',
@@ -317,7 +317,7 @@ function renderScenarioTable(
 }
 
 /**
- * Regenerates doc/BENCHMARKS.md from whatever is currently in
+ * Regenerates docs/BENCHMARKS.md from whatever is currently in
  * benchmark/results/*.json. Called automatically by the orchestrator at the
  * end of `npm run bench`, and importable/callable standalone via
  * `npm run bench:report` (see the CLI entry point at the bottom of this

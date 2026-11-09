@@ -99,7 +99,7 @@ export async function runMatrix(options: OrchestratorOptions): Promise<void> {
   );
   renderConsoleSummary(summarize(results));
 
-  // Regenerates doc/BENCHMARKS.md from *all* accumulated results (not
+  // Regenerates docs/BENCHMARKS.md from *all* accumulated results (not
   // just the ones this invocation ran) so a filtered `--scenario`/`--lib`
   // run still leaves the doc reflecting the full picture rather than
   // narrowing it down to whatever subset was just run.
