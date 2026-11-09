@@ -4,8 +4,8 @@ Compares lightning-pool against [generic-pool](https://github.com/coopernurse/no
 driving an identical simulated resource, so the numbers isolate each pool's
 own bookkeeping/scheduling overhead rather than any real backend's latency.
 For the methodology and the latest generated numbers, see
-[`doc/BENCHMARKS.md`](../doc/BENCHMARKS.md) - it is regenerated automatically
-at the end of every `npm run bench` (or standalone via `npm run bench:report`),
+[`docs/BENCHMARKS.md`](../docs/BENCHMARKS.md) - it is regenerated automatically
+at the end of every `pnpm run bench` (or standalone via `pnpm run bench:report`),
 not hand-edited.
 
 This replaces the older ad hoc `benchmark-tests/` script (removed), structured
@@ -21,14 +21,14 @@ resource (`benchmark/resource.ts`).
 
 ```bash
 # Full default matrix: every scenario, every library, 3 repeats each
-npm run bench
+pnpm run bench
 
 # Fast iteration while developing a scenario/adapter
-npm run bench -- --scenario=queue-contention --lib=lightning-pool --repeats=1
+pnpm run bench --scenario=queue-contention --lib=lightning-pool --repeats=1
 
-# Regenerate doc/BENCHMARKS.md from existing benchmark/results/*.json
-# without re-running the matrix (npm run bench already does this automatically)
-npm run bench:report
+# Regenerate docs/BENCHMARKS.md from existing benchmark/results/*.json
+# without re-running the matrix (pnpm run bench already does this automatically)
+pnpm run bench:report
 ```
 
 `--scenario=` and `--lib=` accept `all` (default), `none`, or a
@@ -40,12 +40,12 @@ Library ids: `lightning-pool`, `generic-pool`.
 Each `(library, scenario)` pair runs in its own child process, spawned one at
 a time - never in parallel - so CPU contention on your machine doesn't skew
 the numbers. Results land in `benchmark/results/*.json` (gitignored raw data
-backing whatever `doc/BENCHMARKS.md` currently reports).
+backing whatever `docs/BENCHMARKS.md` currently reports).
 
 ## Rigor vs. speed
 
 The default iteration/warmup/repeat counts are kept modest on purpose, so a
-full `npm run bench` run finishes in well under a minute - this is a tool
+full `pnpm run bench` run finishes in well under a minute - this is a tool
 meant to be run repeatedly during development, not just once. For numbers
 you intend to publish or cite:
 

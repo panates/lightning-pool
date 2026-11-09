@@ -8,7 +8,7 @@ on:
         type: boolean
         default: false
 
-  # on git push
+  # A push to main releases
   push:
     branches:
       - main
@@ -19,52 +19,41 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Tells whether the commit came through a pull request, and from which branch
+  source:
+    uses: panates/github-actions/.github/workflows/pr-source.yaml@v3
+    permissions:
+      contents: read
+      pull-requests: read
+
+  # A commit merged from dev was tested on dev and is not tested again
   test:
+    needs: source
     if: >
       !contains(github.event.head_commit.message, 'no-release') &&
       (
         (github.event_name == 'workflow_dispatch' && github.event.inputs.skip-tests != 'true') ||
         (
           github.event_name == 'push' &&
-          !(
-            contains(github.event.head_commit.message, 'no-test') ||
-            ( 
-              startsWith(github.event.head_commit.message, 'Merge pull request') &&
-              contains(github.event.head_commit.message, '/dev')
-            )
-          )
+          !contains(github.event.head_commit.message, 'no-test') &&
+          needs.source.outputs.head-ref != 'dev'
         )
       )
+    permissions:
+      contents: read
     uses: ./.github/workflows/test.yml
-    secrets:
-      PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-
-
-  release_after_test:
-    # Wait for "test" job
-    needs: test
-    uses: panates/github-actions/.github/workflows/node-release.yaml@v1
-    secrets:
-      PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   release:
+    needs: [source, test]
+    # always(): a skipped test job (merged from dev, or no-test) still releases
     if: >
-      !contains(github.event.head_commit.message, 'no-release') &&
-      !(
-        (github.event_name == 'workflow_dispatch' && github.event.inputs.skip-tests != 'true') ||
-        (
-          github.event_name == 'push' &&
-          !(
-            contains(github.event.head_commit.message, 'no-test') ||
-            ( 
-              startsWith(github.event.head_commit.message, 'Merge pull request') &&
-              contains(github.event.head_commit.message, '/dev')
-            )
-          )
-        )
-      )
-    uses: panates/github-actions/.github/workflows/node-release.yaml@v1
-    secrets:
-      PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      always() && !cancelled() &&
+      needs.source.result == 'success' &&
+      (needs.test.result == 'success' || needs.test.result == 'skipped') &&
+      !contains(github.event.head_commit.message, 'no-release')
+    uses: panates/github-actions/.github/workflows/node-release.yaml@v3
+    # The version bump, the tag, the GitHub Release and the merge back into dev write to the repository
+    permissions:
+      contents: write
+      # node-release.yaml asks for it in every repository; npm Trusted Publishing (OIDC) uses it, no NPM_TOKEN
+      id-token: write

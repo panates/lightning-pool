@@ -75,7 +75,7 @@ async function main(): Promise<void> {
       `libs=[${libs.join(', ')}] repeats=${repeats}`,
   );
   await runMatrix({ libs, scenarios, repeats });
-  console.log('\nDone. doc/BENCHMARKS.md has been regenerated.');
+  console.log('\nDone. docs/BENCHMARKS.md has been regenerated.');
 }
 
 main().catch(err => {

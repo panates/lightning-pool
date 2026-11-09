@@ -9,7 +9,7 @@
 
 High performance resource pool written with TypeScript.
 
- - A fast Resource Pool implementation for JavaScript - see [doc/BENCHMARKS.md](doc/BENCHMARKS.md) for the numbers against [generic-pool](https://github.com/coopernurse/node-pool), or [benchmark/README.md](benchmark/README.md) to reproduce them yourself
+ - A fast Resource Pool implementation for JavaScript - see [docs/BENCHMARKS.md](docs/BENCHMARKS.md) for the numbers against [generic-pool](https://github.com/coopernurse/node-pool), or [benchmark/README.md](benchmark/README.md) to reproduce them yourself
  - Advanced configuration options, suits for enterprise level applications
  - Configuration can be changed while pool running
  - Promise based factory supported
@@ -78,12 +78,12 @@ await pool.close(5000);
 
 ## Documentation
 
-See [doc/API.md](doc/API.md) for the full API reference - factory/options shape, every method and property,
+See [docs/API.md](docs/API.md) for the full API reference - factory/options shape, every method and property,
 emitted events, and the `PoolState`/`ResourceState` enums.
 
 ## Node Compatibility
 
-  - node `>= 16.0`;
+  - node `>= 22.0`;
   
 ### License
 [MIT](LICENSE)
@@ -92,7 +92,7 @@ emitted events, and the `PoolState`/`ResourceState` enums.
 [npm-url]: https://npmjs.org/package/lightning-pool
 [ci-test-image]: https://github.com/panates/lightning-pool/actions/workflows/test.yml/badge.svg
 [ci-test-url]: https://github.com/panates/lightning-pool/actions/workflows/test.yml
-[coveralls-image]: https://img.shields.io/coveralls/panates/lightning-pool/master.svg
+[coveralls-image]: https://img.shields.io/coveralls/panates/lightning-pool/dev.svg
 [coveralls-url]: https://coveralls.io/r/panates/lightning-pool
 [downloads-image]: https://img.shields.io/npm/dm/lightning-pool.svg
 [downloads-url]: https://npmjs.org/package/lightning-pool

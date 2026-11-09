@@ -1,26 +1,21 @@
-# compiled output
-/node_modules
-/build
+# Dependencies
 node_modules
-coverage
-*.tsbuildinfo
-graphify-out
-.claude
 
-# benchmark raw results (regenerate with `npm run bench`)
+# Build output
+build/
+*.tsbuildinfo
+
+# Benchmark raw results (regenerate with `pnpm run bench`)
 /benchmark/results
 
-# environment variables
+# Environment variables: only an example file is committed
 .env
-.development.env
+.env.*
+!.env.example
 
 # Logs
 logs
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
 
 # OS
 .DS_Store
@@ -28,6 +23,11 @@ lerna-debug.log*
 # Tests
 /coverage
 /.nyc_output
+
+# Claude Code: .claude/settings.json is shared and committed, these are local
+.claude/settings.local.json
+.claude/worktrees/
+graphify-out
 
 # IDEs and editors
 /.idea
