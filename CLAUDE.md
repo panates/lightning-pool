@@ -32,5 +32,5 @@ Before trusting or editing such a doc in a session:
 
 This keeps hand-written docs from silently drifting out of sync with the code they document (this happened once
 already - `docs/API.md` was rewritten from a README section that had drifted from the actual `Pool` API for years).
-Auto-generated docs (e.g. `docs/BENCHMARKS.md`) don't need this - they're regenerated wholesale by `npm run bench`/
-`npm run bench:report`, never hand-edited.
+Auto-generated docs (e.g. `docs/BENCHMARKS.md`) don't need this - they're regenerated wholesale by `pnpm run bench`/
+`pnpm run bench:report`, never hand-edited.

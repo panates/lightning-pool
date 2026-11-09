@@ -5,7 +5,7 @@ driving an identical simulated resource, so the numbers isolate each pool's
 own bookkeeping/scheduling overhead rather than any real backend's latency.
 For the methodology and the latest generated numbers, see
 [`docs/BENCHMARKS.md`](../docs/BENCHMARKS.md) - it is regenerated automatically
-at the end of every `npm run bench` (or standalone via `npm run bench:report`),
+at the end of every `pnpm run bench` (or standalone via `pnpm run bench:report`),
 not hand-edited.
 
 This replaces the older ad hoc `benchmark-tests/` script (removed), structured
@@ -21,14 +21,14 @@ resource (`benchmark/resource.ts`).
 
 ```bash
 # Full default matrix: every scenario, every library, 3 repeats each
-npm run bench
+pnpm run bench
 
 # Fast iteration while developing a scenario/adapter
-npm run bench -- --scenario=queue-contention --lib=lightning-pool --repeats=1
+pnpm run bench -- --scenario=queue-contention --lib=lightning-pool --repeats=1
 
 # Regenerate docs/BENCHMARKS.md from existing benchmark/results/*.json
-# without re-running the matrix (npm run bench already does this automatically)
-npm run bench:report
+# without re-running the matrix (pnpm run bench already does this automatically)
+pnpm run bench:report
 ```
 
 `--scenario=` and `--lib=` accept `all` (default), `none`, or a
@@ -45,7 +45,7 @@ backing whatever `docs/BENCHMARKS.md` currently reports).
 ## Rigor vs. speed
 
 The default iteration/warmup/repeat counts are kept modest on purpose, so a
-full `npm run bench` run finishes in well under a minute - this is a tool
+full `pnpm run bench` run finishes in well under a minute - this is a tool
 meant to be run repeatedly during development, not just once. For numbers
 you intend to publish or cite:
 
