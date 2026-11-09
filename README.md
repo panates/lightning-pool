@@ -83,7 +83,7 @@ emitted events, and the `PoolState`/`ResourceState` enums.
 
 ## Node Compatibility
 
-  - node `>= 16.0`;
+  - node `>= 22.0`;
   
 ### License
 [MIT](LICENSE)
