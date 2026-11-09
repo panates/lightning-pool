@@ -17,6 +17,12 @@ export class PoolRequest {
   timeoutHandle: any;
   /** Set once `acquireTimeoutMillis` has elapsed for this request. */
   timedOut = false;
+  /**
+   * Called when `acquireTimeoutMillis` elapses, before `request-timeout` is
+   * emitted and the callback is rejected. The pool uses it to drop the
+   * request from its queue, so `pending` no longer counts it.
+   */
+  onTimeout?: () => void;
 
   constructor(pool: Pool, callback?: Callback, options?: any) {
     this.created = Date.now();
@@ -26,6 +32,7 @@ export class PoolRequest {
       this.timeoutHandle = setTimeout(() => {
         this.timedOut = true;
         this.stopTimout();
+        if (this.onTimeout) this.onTimeout();
         pool.emit('request-timeout');
         this.callback(new Error('Request timed out'));
       }, pool.options.acquireTimeoutMillis);
