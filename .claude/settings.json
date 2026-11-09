@@ -1,0 +1,38 @@
+{
+  "extraKnownMarketplaces": {
+    "panates": {
+      "source": {
+        "source": "github",
+        "repo": "panates/ai-harness"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "panates@panates": true
+  },
+  "attribution": {
+    "commit": ""
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/ehanoglu/.local/bin/graphify hook-guard search"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/ehanoglu/.local/bin/graphify hook-guard read"
+          }
+        ]
+      }
+    ]
+  }
+}

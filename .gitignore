@@ -5,7 +5,8 @@ node_modules
 coverage
 *.tsbuildinfo
 graphify-out
-.claude
+.claude/*
+!.claude/settings.json
 
 # benchmark raw results (regenerate with `npm run bench`)
 /benchmark/results
