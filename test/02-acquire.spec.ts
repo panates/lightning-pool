@@ -154,6 +154,55 @@ describe('Acquiring', () => {
     });
   });
 
+  it('should remove a timed out request from the queue at once', async () => {
+    pool = createPool(new TestFactory(), {
+      acquireTimeoutMillis: 15,
+      max: 1,
+    });
+    const first = await pool.acquire();
+    let pendingOnTimeout: number | undefined;
+    pool.once('request-timeout', () => (pendingOnTimeout = pool.pending));
+
+    await expect(pool.acquire()).rejects.toThrow('Request timed out');
+    expect(pendingOnTimeout).toStrictEqual(0);
+    expect(pool.pending).toStrictEqual(0);
+
+    pool.release(first);
+    const second = await pool.acquire();
+    expect(second).toBe(first);
+    expect(pool.pending).toStrictEqual(0);
+    expect(pool.acquired).toStrictEqual(1);
+  });
+
+  it('should not requeue a request that timed out during a failed validation', async () => {
+    let validations = 0;
+    pool = createPool(
+      new TestFactory({
+        validate: () =>
+          new Promise((resolve, reject) => {
+            validations++;
+            setTimeout(() => reject(new Error('Validate error')), 30);
+          }),
+      }),
+      {
+        acquireTimeoutMillis: 10,
+        max: 1,
+      },
+    );
+    await pool.releaseAsync(await pool.acquire());
+
+    await expect(pool.acquire()).rejects.toThrow('Request timed out');
+    /* Let the validation fail; the resource is destroyed */
+    await new Promise(resolve => setTimeout(resolve, 40));
+    expect(validations).toStrictEqual(1);
+    expect(pool.pending).toStrictEqual(0);
+    expect(pool.size).toStrictEqual(0);
+
+    const obj = await pool.acquire();
+    expect(obj.id).toStrictEqual(2);
+    expect(pool.pending).toStrictEqual(0);
+  });
+
   it('should cancel retry if acquire timed out', _done => {
     const done = createDoneCallback(_done);
     pool = createPool(

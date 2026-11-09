@@ -271,7 +271,11 @@ export class Pool<T = any> extends EventEmitter {
     if (this.options.maxQueue && this.pending >= this.options.maxQueue) {
       return callback(new Error('Pool queue is full'));
     }
-    this._requestQueue.push(new PoolRequest(this, callback));
+    const request = new PoolRequest(this, callback);
+    /* A timed-out request leaves the queue at once, so `pending` drops and
+     * the dispatcher never picks it up. No-op once it is being processed. */
+    request.onTimeout = () => this._requestQueue.remove(request);
+    this._requestQueue.push(request);
     this._processNextRequest();
   }
 
@@ -407,7 +411,9 @@ export class Pool<T = any> extends EventEmitter {
             this._itemDestroy(item);
             this.emit('validate-error', err, item.resource);
             this._requestsProcessing--;
-            this._requestQueue.unshift(request);
+            /* Retry with another resource, unless the request timed out
+             * while the resource was being validated */
+            if (!request.timedOut) this._requestQueue.unshift(request);
             this._processNextRequest();
           } else handleCallback(undefined, item);
         });
