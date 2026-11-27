@@ -1,6 +1,27 @@
 # Changelog
 
-<!-- rman:documented-up-to 40f7e7d6533a648eec2638011eafd8dde8a75e15 -->
+<!-- rman:documented-up-to 6d373e2cd735b89b02ed0aef2a2e3343913f25ea -->
+
+## v4.14.3 (2026-11-27)
+
+### 📚 Documentation
+
+- Align the README top part with the template (e51d414)
+
+### 📦 Build System
+
+- Upgrade dependencies (4a7b10f)
+
+### 🤖 Continuous Integration
+
+- Send coverage to Coveralls from the release (0c37bd3)
+
+### 🧹 Chores
+
+- Name .claude/local/handoff.md as the session handoff note (7848bbf)
+- Drop the committed graphify hooks and CLAUDE.md section (40501e3)
+
+---
 
 ## v4.14.2 (2026-11-09)
 
