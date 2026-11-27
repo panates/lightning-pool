@@ -1,20 +1,22 @@
 # lightning-pool
 
+High performance resource pool written with TypeScript.
+
 [![NPM Version][npm-image]][npm-url]
 [![NPM Downloads][downloads-image]][downloads-url]
 [![CI Tests][ci-test-image]][ci-test-url]
 [![Test Coverage][coveralls-image]][coveralls-url]
 
-## About
+Documentation: [API reference](docs/API.md) · [Benchmarks](docs/BENCHMARKS.md)
 
-High performance resource pool written with TypeScript.
+## Features
 
  - A fast Resource Pool implementation for JavaScript - see [docs/BENCHMARKS.md](docs/BENCHMARKS.md) for the numbers against [generic-pool](https://github.com/coopernurse/node-pool), or [benchmark/README.md](benchmark/README.md) to reproduce them yourself
  - Advanced configuration options, suits for enterprise level applications
  - Configuration can be changed while pool running
  - Promise based factory supported
  - Supports validation and resource reset
- - Fully tested. (%100 coverage)
+ - Fully tested (see the coverage badge above)
 
 ## Installation
 
@@ -88,19 +90,11 @@ emitted events, and the `PoolState`/`ResourceState` enums.
 ### License
 [MIT](LICENSE)
 
-[npm-image]: https://img.shields.io/npm/v/lightning-pool.svg
+[npm-image]: https://img.shields.io/npm/v/lightning-pool
 [npm-url]: https://npmjs.org/package/lightning-pool
-[ci-test-image]: https://github.com/panates/lightning-pool/actions/workflows/test.yml/badge.svg
-[ci-test-url]: https://github.com/panates/lightning-pool/actions/workflows/test.yml
-[coveralls-image]: https://img.shields.io/coveralls/panates/lightning-pool/dev.svg
-[coveralls-url]: https://coveralls.io/r/panates/lightning-pool
 [downloads-image]: https://img.shields.io/npm/dm/lightning-pool.svg
 [downloads-url]: https://npmjs.org/package/lightning-pool
-[gitter-image]: https://badges.gitter.im/panates/lightning-pool.svg
-[gitter-url]: https://gitter.im/panates/lightning-pool?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
-[dependencies-image]: https://david-dm.org/panates/lightning-pool/status.svg
-[dependencies-url]:https://david-dm.org/panates/lightning-pool
-[devdependencies-image]: https://david-dm.org/panates/lightning-pool/dev-status.svg
-[devdependencies-url]:https://david-dm.org/panates/lightning-pool?type=dev
-[quality-image]: http://npm.packagequality.com/shield/lightning-pool.png
-[quality-url]: http://packagequality.com/#?package=lightning-pool
+[ci-test-image]: https://github.com/panates/lightning-pool/actions/workflows/test.yml/badge.svg
+[ci-test-url]: https://github.com/panates/lightning-pool/actions/workflows/test.yml
+[coveralls-image]: https://img.shields.io/coveralls/panates/lightning-pool/main.svg
+[coveralls-url]: https://coveralls.io/r/panates/lightning-pool
