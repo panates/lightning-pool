@@ -43,6 +43,23 @@ jobs:
       contents: read
     uses: ./.github/workflows/test.yml
 
+  # Sends the released code's coverage to Coveralls under main: the report of dev's test run of the
+  # merged commit, or of this run's own test job. It only warns when it finds no report.
+  coverage:
+    needs: [source, test]
+    if: >
+      always() && !cancelled() &&
+      needs.source.result == 'success' &&
+      (needs.test.result == 'success' ||
+       (needs.test.result == 'skipped' && needs.source.outputs.head-ref == 'dev'))
+    uses: panates/github-actions/.github/workflows/coverage-publish.yaml@v3
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+    with:
+      pr-number: ${{ needs.source.outputs.head-ref == 'dev' && needs.source.outputs.pr-number || '' }}
+
   release:
     needs: [source, test]
     # always(): a skipped test job (merged from dev, or no-test) still releases
