@@ -52,10 +52,11 @@ jobs:
       - name: Run unit tests
         run: pnpm run citest
 
-      # The coverage badge reads Coveralls
-      - name: Send coverage to Coveralls
-        uses: coverallsapp/github-action@v2
-        # Once per run
+      # release.yml sends this report to Coveralls under the release commit on main
+      - name: Keep the coverage report for the release
+        uses: actions/upload-artifact@v7
+        # One report per run: the artifact name must be unique
         if: ${{ matrix.node == '24' }}
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: coverage
+          path: coverage/lcov.info
