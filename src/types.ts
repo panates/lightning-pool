@@ -68,10 +68,12 @@ export interface PoolFactory<T = any> {
  */
 export interface PoolConfiguration {
   /**
-   * Maximum number of times the `Pool` will retry creating a resource
-   * before giving up and returning the error to the caller.
+   * Total number of `factory.create()` attempts for one resource before the
+   * `Pool` gives up and returns the error to the caller, the first attempt
+   * included: `3` means up to 2 retries. `0` and `1` both mean a single
+   * attempt with no retry.
    *
-   * @defaultValue `0` - fail on the first error, no retries.
+   * @defaultValue `0` - a single attempt, no retries.
    */
   acquireMaxRetries?: number;
 
