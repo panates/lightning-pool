@@ -1,6 +1,22 @@
 # Changelog
 
-<!-- rman:documented-up-to 6d373e2cd735b89b02ed0aef2a2e3343913f25ea -->
+<!-- rman:documented-up-to eaec1690100026e35e08b1c95d002f1e224f0a45 -->
+
+## v4.15.0 (2026-11-28)
+
+### ✨ Features
+
+- **pool:** add maxUses option to retire a resource after N acquires (b779973)
+
+### 📚 Documentation
+
+- Re-verify docs/API.md against 4.14.3 (b5e37f5)
+
+### 🧹 Chores
+
+- Remove the redundant graph script (18c22c0)
+
+---
 
 ## v4.14.3 (2026-11-27)
 
