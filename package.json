@@ -38,8 +38,7 @@
     "check": "rman check",
     "format": "rman format",
     "bench": "node --import ./benchmark/env.mjs --import @swc-node/register/esm-register benchmark/cli.ts",
-    "bench:report": "node --import ./benchmark/env.mjs --import @swc-node/register/esm-register benchmark/report/render-markdown.ts",
-    "graph": "graphify update ."
+    "bench:report": "node --import ./benchmark/env.mjs --import @swc-node/register/esm-register benchmark/report/render-markdown.ts"
   },
   "type": "module",
   "module": "./index.js",
