@@ -151,6 +151,16 @@ export interface PoolConfiguration {
   maxQueue?: number;
 
   /**
+   * Number of times a resource may be handed out via `acquire()` before the
+   * `Pool` retires it: destroys it on `release()` instead of returning it to
+   * idle, skipping `factory.reset()`. Matches `pg-pool`'s option of the same
+   * name.
+   *
+   * @defaultValue `0` - unlimited, a resource is never retired for this reason.
+   */
+  maxUses?: number;
+
+  /**
    * If `true`, the `Pool` calls `factory.validate()` on a resource before
    * handing it out (when the factory provides one). If `false`,
    * `validate()` is never called.

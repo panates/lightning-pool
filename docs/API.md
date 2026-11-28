@@ -3,7 +3,7 @@
 <!--
 doc-sync-marker:
   verified_version: 4.14.3
-  verified_commit: ba658795ebbbc289cfaba7ac6d4ba0717147b1d7
+  verified_commit: d1396de34b4b0be7f6e8a887dbb99e5b37e1f2c2
   source_paths: src/pool.ts, src/pool-options.ts, src/pool-request.ts, src/resource-item.ts, src/types.ts, src/constants.ts, src/index.ts
 
 This doc was last read against the source at the commit/version above. In a
@@ -69,6 +69,9 @@ Any object with the following properties:
 - `max`: Maximum number of resources the `Pool` will create. (Default `10`)
 - `maxQueue`: Maximum number of `acquire()` requests that may be queued/pending at once; further requests fail
   immediately with an error instead of waiting. (Default `1000`)
+- `maxUses`: Number of times a resource may be handed out via `acquire()` before the `Pool` retires it - destroys it
+  on `release()` instead of returning it to idle, skipping `factory.reset()`. Matches `pg-pool`'s option of the same
+  name. (Default `0` - unlimited, a resource is never retired for this reason)
 - `validation`: If `true`, the `Pool` calls `factory.validate()` on a resource before handing it out (when the
   factory provides one). If `false`, `validate()` is never called. (Default `true`)
 

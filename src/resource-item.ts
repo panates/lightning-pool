@@ -18,6 +18,8 @@ export class ResourceItem<T> {
   idleTime = 0;
   /** Set once `factory.destroy()` has been called for this item. */
   destroyed = false;
+  /** Number of times this item has been handed out via `acquire()` (see `PoolConfiguration.maxUses`). */
+  uses = 0;
 
   constructor(resource: T) {
     this.resource = resource;
