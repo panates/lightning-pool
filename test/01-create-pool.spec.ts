@@ -242,6 +242,18 @@ describe('Creating pool', () => {
     expect(pool.options.maxQueue).toStrictEqual(1);
   });
 
+  it('should default maxUses option must be 0', () => {
+    pool = createPool(new TestFactory());
+    expect(pool.options.maxUses).toStrictEqual(0);
+  });
+
+  it('should set maxUses option', () => {
+    pool = createPool(new TestFactory(), { maxUses: 3 });
+    expect(pool.options.maxUses).toStrictEqual(3);
+    pool.options.maxUses = -1;
+    expect(pool.options.maxUses).toStrictEqual(0);
+  });
+
   it('should default validation option must be false', () => {
     pool = createPool(new TestFactory());
     expect(pool.options.validation).toStrictEqual(true);

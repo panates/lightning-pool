@@ -13,6 +13,7 @@ const defaultValues = {
   minIdle: 0,
   max: 10,
   maxQueue: 1000,
+  maxUses: 0,
   validation: true,
 };
 
@@ -35,6 +36,7 @@ export class PoolOptions extends EventEmitter {
   private _minIdle = defaultValues.minIdle;
   private _max = defaultValues.max;
   private _maxQueue = defaultValues.maxQueue;
+  private _maxUses = defaultValues.maxUses;
   private _validation = defaultValues.validation;
 
   constructor(public readonly pool: Pool) {
@@ -42,7 +44,11 @@ export class PoolOptions extends EventEmitter {
     this.pool = pool;
   }
 
-  /** @defaultValue `0` - fail on the first error, no retries. */
+  /**
+   * Total `factory.create()` attempts per resource, the first included.
+   *
+   * @defaultValue `0` - a single attempt, no retries.
+   */
   get acquireMaxRetries(): number {
     return this._acquireMaxRetries;
   }
@@ -183,6 +189,23 @@ export class PoolOptions extends EventEmitter {
   set maxQueue(val: number) {
     this._maxQueue = val >= 0 ? Math.max(val, 1) : defaultValues.maxQueue;
     this.emit('change', 'maxQueue', this._maxQueue);
+  }
+
+  /**
+   * Number of times a resource may be handed out via `acquire()` before the
+   * `Pool` retires it (destroys it on release instead of returning it to
+   * idle).
+   *
+   * @defaultValue `0` - unlimited, a resource is never retired for this reason.
+   */
+  get maxUses(): number {
+    return this._maxUses;
+  }
+
+  /** Negative values reset to the default instead of being applied. */
+  set maxUses(val: number) {
+    this._maxUses = val >= 0 ? val : defaultValues.maxUses;
+    this.emit('change', 'maxUses', this._maxUses);
   }
 
   /**
