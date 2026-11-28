@@ -42,7 +42,11 @@ export class PoolOptions extends EventEmitter {
     this.pool = pool;
   }
 
-  /** @defaultValue `0` - fail on the first error, no retries. */
+  /**
+   * Total `factory.create()` attempts per resource, the first included.
+   *
+   * @defaultValue `0` - a single attempt, no retries.
+   */
   get acquireMaxRetries(): number {
     return this._acquireMaxRetries;
   }

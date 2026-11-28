@@ -2,8 +2,8 @@
 
 <!--
 doc-sync-marker:
-  verified_version: 4.14.0
-  verified_commit: ba8a0f739b8c049632e4c95013fc83a421d9fc91
+  verified_version: 4.14.3
+  verified_commit: ba658795ebbbc289cfaba7ac6d4ba0717147b1d7
   source_paths: src/pool.ts, src/pool-options.ts, src/pool-request.ts, src/resource-item.ts, src/types.ts, src/constants.ts, src/index.ts
 
 This doc was last read against the source at the commit/version above. In a
@@ -52,8 +52,9 @@ Any object with the following properties:
 
 ### `options`
 
-- `acquireMaxRetries`: Maximum number of times the `Pool` will retry creating a resource before giving up and
-  returning the error to the caller. (Default `0` - fail on the first error, no retries)
+- `acquireMaxRetries`: Total number of `factory.create()` attempts for one resource before the `Pool` gives up and
+  returns the error to the caller - the first attempt included, so `3` means up to 2 retries. `0` and `1` both mean a
+  single attempt with no retry. (Default `0`)
 - `acquireRetryWait`: Time in milliseconds the `Pool` waits between retry attempts. (Default `2000`)
 - `acquireTimeoutMillis`: Time in milliseconds an `acquire()` call will wait for a resource before failing with a
   timeout error. (Default `0` - no timeout)
@@ -188,8 +189,10 @@ await pool.close(); // wait indefinitely for active resources to be released
 - `acquired` (`number`): Number of resources currently acquired.
 - `available` (`number`): Number of idle resources.
 - `creating` (`number`): Number of resources currently being created.
-- `pending` (`number`): Number of `acquire()` requests currently queued/being processed.
-- `size` (`number`): Total number of resources tracked by the `Pool` (acquired + idle + being created).
+- `pending` (`number`): Number of `acquire()` requests currently queued/being processed. A request that hits
+  `acquireTimeoutMillis` leaves the queue at once and is no longer counted.
+- `size` (`number`): Total number of resources in the `Pool`, idle or acquired. A resource still being created is not
+  counted until `factory.create()` resolves - see `creating`.
 - `state` (`PoolState`): Current lifecycle state of the `Pool` - see [`PoolState`](#poolstate) below.
 - `options` (`PoolOptions`): A live, mutable options object - every option above is a get/set property on it, and
   changes take effect immediately (e.g. `pool.options.max = 20`).
