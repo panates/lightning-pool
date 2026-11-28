@@ -584,6 +584,7 @@ export class Pool<T = any> extends EventEmitter {
     if (item.state !== ResourceState.ACQUIRED) {
       this._itemDetach(item);
       item.state = ResourceState.ACQUIRED;
+      item.uses++;
       this._acquiredResources.push(item);
       item.acquiredNode = this._acquiredResources.tail;
     }
@@ -613,10 +614,20 @@ export class Pool<T = any> extends EventEmitter {
    * Runs `factory.reset()` (if the item was acquired and a `reset` is
    * provided), then moves `item` to the idle list (FIFO or LIFO end per
    * `fifo`) and processes the next queued request. Destroys the item
-   * instead if `reset()` fails.
+   * instead if `reset()` fails, or (skipping `reset()` entirely) if it has
+   * reached `maxUses`.
    */
   private _itemSetIdle(item: ResourceItem<T>, callback?: Callback) {
     const isAcquired = item.state === ResourceState.ACQUIRED;
+
+    if (
+      isAcquired &&
+      this.options.maxUses &&
+      item.uses >= this.options.maxUses
+    ) {
+      this._itemDestroy(item, callback);
+      return;
+    }
 
     const handleCallback = (err?: Error) => {
       if (err) return this._itemDestroy(item, callback);
